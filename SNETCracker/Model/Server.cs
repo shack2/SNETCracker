@@ -21,5 +21,6 @@ namespace SNETCracker.Model
         public AutoResetEvent isEndMRE = new AutoResetEvent(false);
         public Boolean isConnected = false;
         public RdpClient client = null;
+        public long userTime = 0;
     }
 }

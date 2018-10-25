@@ -61,6 +61,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ChilkatDotNet4">
+      <HintPath>libs\ChilkatDotNet4.dll</HintPath>
+    </Reference>
     <Reference Include="Enyim.Caching, Version=2.12.0.0, Culture=neutral, PublicKeyToken=cec98615db04012e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\memcached\Enyim.Caching.dll</HintPath>
@@ -68,6 +71,9 @@
     <Reference Include="Enyim.Caching.Log4NetAdapter, Version=2.12.0.0, Culture=neutral, PublicKeyToken=cec98615db04012e, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\memcached\Enyim.Caching.Log4NetAdapter.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentFTP">
+      <HintPath>libs\FluentFTP.dll</HintPath>
     </Reference>
     <Reference Include="LumiSoft.Net, Version=4.5.6548.41317, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -134,6 +140,7 @@
       <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.IO.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Management" />
     <Reference Include="System.Net" />
     <Reference Include="System.Runtime, Version=2.6.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.1.1.10\lib\net40\System.Runtime.dll</HintPath>
@@ -171,7 +178,6 @@
     <Compile Include="Model\CrackMySQL.cs" />
     <Compile Include="Model\CrackOracle.cs" />
     <Compile Include="Model\CrackPostgreSQL.cs" />
-    <Compile Include="Model\CrackRDP.cs" />
     <Compile Include="Model\CrackRedis.cs" />
     <Compile Include="Model\CrackTelnet.cs" />
     <Compile Include="Model\CrackFTP.cs" />
@@ -329,7 +335,6 @@
     </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

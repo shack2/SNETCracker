@@ -27,7 +27,9 @@ namespace SNETCracker.Model
                     password = "";
                 }
                 conn.ConnectionString = "server=" + ip + ";user id=" + username + ";password=" + password + ";pooling=false;ConnectionTimeout=" + timeOut;
+                
                 conn.Open();
+                
                 server.isSuccess = ConnectionState.Open.Equals(conn.State);
                 if (server.isSuccess)
                 {
@@ -60,7 +62,6 @@ namespace SNETCracker.Model
             finally
             {
                 conn.Close();
-     
             }
             return server;
         }

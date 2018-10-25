@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Management;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -59,6 +60,7 @@ namespace SNETCracker
 
                 LogWarning("加载检查服务配置发生异常！" + e.Message);
             }
+            services.Clear();
             for (int i=0;i< servicesName.Length;i++) {
                 ServiceModel sm = new ServiceModel();
                 sm.Name = servicesName[i];
@@ -275,7 +277,8 @@ namespace SNETCracker
                             {
                                 break;
                             }
-
+                            Stopwatch sw = new Stopwatch();
+                            sw.Start();
                             if (serviceName.Equals("RDP"))
                             {
                                 server=creackRDP(ip, port, username, password, timeOut);
@@ -291,6 +294,8 @@ namespace SNETCracker
                                 server = cs.creack(ip, port, username, password, timeOut);
 
                             }
+                            sw.Stop();
+                            server.userTime = sw.ElapsedMilliseconds;
 
                         }
                         catch (IPBreakException ie)
@@ -352,7 +357,7 @@ namespace SNETCracker
                                         list_success_username.Add(ip + serviceName + port + username);
                                     }
                                     Interlocked.Increment(ref successCount);
-                                    addItemToListView(successCount, ip, serviceName, port, username, password, server.banner);
+                                    addItemToListView(successCount, ip, serviceName, port, username, password, server.banner, server.userTime);
                                     string sinfo = ip + "-----" + serviceName + "----" + username + "----" + password +"----"+ server.banner +"----成功！";
                                     LogInfo(sinfo);
                                     FileTool.AppendLogToFile(Directory.GetCurrentDirectory() + "/cracker_result.log", sinfo);
@@ -375,7 +380,7 @@ namespace SNETCracker
             }
         }
 
-        private void addItemToListView(int successCount,string ip,String serviceName,int port,String username,String password,String banner) {
+        private void addItemToListView(int successCount,string ip,String serviceName,int port,String username,String password,String banner,long userTime) {
 
             ListViewItem lvi = new ListViewItem(successCount.ToString());
             lvi.SubItems.Add(ip);
@@ -384,6 +389,7 @@ namespace SNETCracker
             lvi.SubItems.Add(username);
             lvi.SubItems.Add(password);
             lvi.SubItems.Add(banner);
+            lvi.SubItems.Add(userTime+"");
             this.list_lvw.Invoke(new DelegateAddItem(addItem), lvi);
         }
 
@@ -710,7 +716,7 @@ namespace SNETCracker
             Array.Copy(forgedBytes, 0, output, 14, forgedBytes.Length);
 
             var rsaManaged2 = new RSAManaged();
-            rsaManaged2.FromXmlString("<RSAKeyValue><Modulus>thycVKzZzdxBD6Rl8RoS9MEs1rrLY5qDhse+a+ljfpM=</Modulus><Exponent>AQAB</Exponent><P>xJXNbvuhJEpA647ZChJHMQ==</P><Q>7Sb4m1/8WXGGL/2Zw075Aw==</Q><DP>VtattvbkyfkbEHM7oN1OIQ==</DP><DQ>0kQaatCpErjYDBbjTUro9w==</DQ><InverseQ>AVeR8pKZ4H05p7NRb02kNw==</InverseQ><D>ENshFS1Sk51ZYEtFLEXPjzPUmZbbIak0S+dyUK5o/sE=</D></RSAKeyValue>");
+            rsaManaged2.FromXmlString("<RSAKeyValue><Modulus>thycVKzZzdxBD6Rl8RoS9MEs1rrLY5qDhse+a+ljfpM=</Modulus><Exponent>AQAB</Exponent><P>xJXNbvuhJEpA647ZChJHMQ==</P><Q>7Sb4m1/8WXGGL/2Zw075Aw==</Q><DP>VtattvbkyfkbEHM7oN1OIQ==</DP><DQ>0kQaatCpErjYDBbjTUro9w==</DQ><InieQ>AVeR8pKZ4H05p7NRb02kNw==</InverseQ><D>ENshFS1Sk51ZYEtFLEXPjzPUmZbbIak0S+dyUK5o/sE=</D></RSAKeyValue>");
 
             var decrypted = rsaManaged2.DecryptValue(output);
 
@@ -785,8 +791,6 @@ namespace SNETCracker
       
         private void btn_cracker_Click(object sender, EventArgs e)
         {
-           
-           
             this.btn_cracker.Enabled = false;
             this.list_success_username.Clear();
             this.services_list.Enabled = false;
@@ -1024,8 +1028,52 @@ namespace SNETCracker
             }
         }
 
-        private static int version = 20180809;
-        public static string versionURL = "http://www.shack2.org/soft/SNETCracker/version.txt";
+        public static String getSid()
+        {
+            //获得系统唯一号，系统安装id和mac组合
+            String sid = Environment.OSVersion + "_";
+            try
+            {
+                var officeSoftware = new ManagementObjectSearcher("SELECT ID, ApplicationId, PartialProductKey, LicenseIsAddon, Description, Name, OfflineInstallationId FROM SoftwareLicensingProduct where PartialProductKey <> null");
+                var result = officeSoftware.Get();
+                foreach (var item in result)
+                {
+                    if (item.GetPropertyValue("name").ToString().StartsWith("Windows"))
+                    {
+
+                        sid += item.GetPropertyValue("OfflineInstallationId").ToString() + "__";
+                        break;
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                sid += "ex__";
+            }
+            try
+            {
+
+                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                ManagementObjectCollection moc = mc.GetInstances();
+                foreach (ManagementObject mo in moc)
+                {
+                    if ((bool)mo["IPEnabled"] == true)
+                    {
+                        sid += mo["MacAddress"].ToString().Replace(":", "-");
+                        break;
+                    }
+                }
+            }
+            catch
+            {
+                sid += "ex__" + System.Guid.NewGuid();
+            }
+            return sid;
+        }
+
+        private static int version = 20180924;
+        public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {
             MessageBox.Show("V1.0 测试版----" + version);
@@ -1099,6 +1147,13 @@ namespace SNETCracker
         private void cbox_threadSize_SelectedIndexChanged(object sender, EventArgs e)
         {
             updateThreadSize();
+        }
+
+        private void tsmi_reloadConfig_Click(object sender, EventArgs e)
+        {
+            initServices();
+            MessageBox.Show("ok");
+           
         }
     }
 }

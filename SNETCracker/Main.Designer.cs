@@ -64,8 +64,6 @@
             this.col_username = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.col_pass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.col_banner = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.col_isWeb = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.col_title = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cms_lvw = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmi_export = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_deleteSelectItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,6 +90,7 @@
             this.tsmi_options = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_options_export = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_options_import = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmi_reloadConfig = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_set = new System.Windows.Forms.ToolStripMenuItem();
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_help_about = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,6 +98,7 @@
             this.tsmi_help_version = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_help_support = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
+            this.col_useTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.cms_lvw.SuspendLayout();
@@ -443,8 +443,7 @@
             this.col_username,
             this.col_pass,
             this.col_banner,
-            this.col_isWeb,
-            this.col_title});
+            this.col_useTime});
             this.list_lvw.ContextMenuStrip = this.cms_lvw;
             this.list_lvw.FullRowSelect = true;
             this.list_lvw.GridLines = true;
@@ -487,16 +486,6 @@
             // 
             this.col_banner.Text = "BANNER";
             this.col_banner.Width = 100;
-            // 
-            // col_isWeb
-            // 
-            this.col_isWeb.Text = "HTTP";
-            this.col_isWeb.Width = 50;
-            // 
-            // col_title
-            // 
-            this.col_title.Text = "标题";
-            this.col_title.Width = 147;
             // 
             // cms_lvw
             // 
@@ -673,7 +662,8 @@
             // 
             this.tsmi_options.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmi_options_export,
-            this.tsmi_options_import});
+            this.tsmi_options_import,
+            this.tsmi_reloadConfig});
             this.tsmi_options.Name = "tsmi_options";
             this.tsmi_options.Size = new System.Drawing.Size(48, 21);
             this.tsmi_options.Text = "选 项";
@@ -691,6 +681,13 @@
             this.tsmi_options_import.Size = new System.Drawing.Size(148, 22);
             this.tsmi_options_import.Text = "导入扫描列表";
             this.tsmi_options_import.Click += new System.EventHandler(this.tsmi_options_import_Click);
+            // 
+            // tsmi_reloadConfig
+            // 
+            this.tsmi_reloadConfig.Name = "tsmi_reloadConfig";
+            this.tsmi_reloadConfig.Size = new System.Drawing.Size(148, 22);
+            this.tsmi_reloadConfig.Text = "重新加载配置";
+            this.tsmi_reloadConfig.Click += new System.EventHandler(this.tsmi_reloadConfig_Click);
             // 
             // tsmi_set
             // 
@@ -743,6 +740,10 @@
             this.tsmi_tools.Name = "tsmi_tools";
             this.tsmi_tools.Size = new System.Drawing.Size(48, 21);
             this.tsmi_tools.Text = "工 具";
+            // 
+            // col_useTime
+            // 
+            this.col_useTime.Text = "用时[毫秒]";
             // 
             // Main
             // 
@@ -819,9 +820,7 @@
         private System.Windows.Forms.ColumnHeader col_serviceName;
         private System.Windows.Forms.ToolStripStatusLabel stxt_percent;
         private System.Windows.Forms.Button btn_stopCracker;
-        private System.Windows.Forms.ColumnHeader col_isWeb;
         private System.Windows.Forms.ColumnHeader col_banner;
-        private System.Windows.Forms.ColumnHeader col_title;
         private System.Windows.Forms.CheckBox chk_notAutoSelectDic;
         private System.Windows.Forms.CheckBox chk_isScanPort;
         private System.Windows.Forms.CheckBox chk_crackerOneCount;
@@ -845,6 +844,8 @@
         private System.Windows.Forms.ToolStripMenuItem tsmi_tools;
         private System.Windows.Forms.RichTextBox txt_log;
         private System.Windows.Forms.Panel rdp_panle;
+        private System.Windows.Forms.ToolStripMenuItem tsmi_reloadConfig;
+        private System.Windows.Forms.ColumnHeader col_useTime;
     }
 }
 
