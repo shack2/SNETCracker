@@ -1031,6 +1031,7 @@ namespace SNETCracker
         public static String getSid()
         {
             //获得系统唯一号，系统安装id和mac组合
+            
             String sid = Environment.OSVersion + "_";
             try
             {
@@ -1071,8 +1072,8 @@ namespace SNETCracker
             }
             return sid;
         }
-
-        private static int version = 20180924;
+        
+        private static int version = 20181113;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {

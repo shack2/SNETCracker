@@ -64,6 +64,7 @@
             this.col_username = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.col_pass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.col_banner = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.col_useTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.cms_lvw = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.tsmi_export = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_deleteSelectItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,7 +99,6 @@
             this.tsmi_help_version = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_help_support = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
-            this.col_useTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.cms_lvw.SuspendLayout();
@@ -487,6 +487,10 @@
             this.col_banner.Text = "BANNER";
             this.col_banner.Width = 100;
             // 
+            // col_useTime
+            // 
+            this.col_useTime.Text = "用时[毫秒]";
+            // 
             // cms_lvw
             // 
             this.cms_lvw.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -741,10 +745,6 @@
             this.tsmi_tools.Size = new System.Drawing.Size(48, 21);
             this.tsmi_tools.Text = "工 具";
             // 
-            // col_useTime
-            // 
-            this.col_useTime.Text = "用时[毫秒]";
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -758,7 +758,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta18 by shack2";
+            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta19 by shack2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Shown += new System.EventHandler(this.Main_Shown);
             this.groupBox1.ResumeLayout(false);
