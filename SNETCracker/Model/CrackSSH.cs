@@ -11,7 +11,7 @@ namespace SNETCracker.Model
         {
 
         }
-       /*
+       
         public override Server creack(string ip, int port, string username, string password, int timeOut)
         {
             Rebex.Net.Ssh ssh = new Rebex.Net.Ssh();
@@ -46,10 +46,10 @@ namespace SNETCracker.Model
             }
             return server;
 
-        }*/
+        }
 
 
-        
+        /*
        public override Server creack(string ip, int port, string username, string password, int timeOut)
        {
            Chilkat.Ssh ssh = new Chilkat.Ssh();
@@ -90,7 +90,7 @@ namespace SNETCracker.Model
            }
            return server;
 
-       }
+       }*/
 
     }
 }
