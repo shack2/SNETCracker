@@ -99,6 +99,8 @@
             this.tsmi_help_version = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_help_support = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tssl_notScanPortsSumCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.cms_lvw.SuspendLayout();
@@ -540,9 +542,9 @@
             // rdp_panle
             // 
             this.rdp_panle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.rdp_panle.Location = new System.Drawing.Point(213, 12);
+            this.rdp_panle.Location = new System.Drawing.Point(214, 9);
             this.rdp_panle.Name = "rdp_panle";
-            this.rdp_panle.Size = new System.Drawing.Size(10, 11);
+            this.rdp_panle.Size = new System.Drawing.Size(10, 10);
             this.rdp_panle.TabIndex = 12;
             // 
             // bt_status
@@ -560,7 +562,9 @@
             this.toolStripStatusLabel3,
             this.stxt_crackerSuccessCount,
             this.toolStripStatusLabel5,
-            this.stxt_speed});
+            this.stxt_speed,
+            this.toolStripStatusLabel4,
+            this.tssl_notScanPortsSumCount});
             this.bt_status.Location = new System.Drawing.Point(0, 655);
             this.bt_status.Name = "bt_status";
             this.bt_status.Size = new System.Drawing.Size(876, 22);
@@ -611,8 +615,8 @@
             // toolStripStatusLabel6
             // 
             this.toolStripStatusLabel6.Name = "toolStripStatusLabel6";
-            this.toolStripStatusLabel6.Size = new System.Drawing.Size(68, 17);
-            this.toolStripStatusLabel6.Text = "线程队列：";
+            this.toolStripStatusLabel6.Size = new System.Drawing.Size(92, 17);
+            this.toolStripStatusLabel6.Text = "预计检查队列：";
             // 
             // stxt_threadPoolStatus
             // 
@@ -745,6 +749,18 @@
             this.tsmi_tools.Size = new System.Drawing.Size(48, 21);
             this.tsmi_tools.Text = "工 具";
             // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(116, 17);
+            this.toolStripStatusLabel4.Text = "剩余端口扫描次数：";
+            // 
+            // tssl_notScanPortsSumCount
+            // 
+            this.tssl_notScanPortsSumCount.Name = "tssl_notScanPortsSumCount";
+            this.tssl_notScanPortsSumCount.Size = new System.Drawing.Size(15, 17);
+            this.tssl_notScanPortsSumCount.Text = "0";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -758,7 +774,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta19 by shack2";
+            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta20 by shack2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Shown += new System.EventHandler(this.Main_Shown);
             this.groupBox1.ResumeLayout(false);
@@ -846,6 +862,8 @@
         private System.Windows.Forms.Panel rdp_panle;
         private System.Windows.Forms.ToolStripMenuItem tsmi_reloadConfig;
         private System.Windows.Forms.ColumnHeader col_useTime;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+        private System.Windows.Forms.ToolStripStatusLabel tssl_notScanPortsSumCount;
     }
 }
 

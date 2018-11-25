@@ -24,6 +24,9 @@ namespace MyRDP
             this.OnLogonError += Rdp_OnLogonError;
             this.OnFatalError += Rdp_OnFatalError;
             this.OnDisconnected += Rdp_OnDisconnected;
+            this.OnAuthenticationWarningDisplayed += Rdp_OnAuthenticationWarningDisplayed;
+            this.OnAuthenticationWarningDismissed += Rdp_OnAuthenticationWarningDismissed;
+           
 
         }
 
@@ -44,11 +47,11 @@ namespace MyRDP
             try
             {
                 this.timeOutLog.Start();
-                this.AdvancedSettings4.Compress = 1;
+                this.AdvancedSettings.Compress = 1;
                 this.Height =1;
                 this.Width = 1;
                 this.Password = pass;
-                this.ColorDepth =8 ;
+                this.ColorDepth =4 ;
                 this.Server = ip;
                 this.UserName = user;
                 this.AdvancedSettings4.EnableMouse = 0;
@@ -57,6 +60,7 @@ namespace MyRDP
                 IMsTscNonScriptable secured = (IMsTscNonScriptable)this.GetOcx();
                 secured.ClearTextPassword = pass;
                 this.Connect();
+             
             }
             catch (Exception e)
             {
@@ -90,6 +94,18 @@ namespace MyRDP
         {
             this.server.isConnected = true;
             
+        }
+
+        private void Rdp_OnAuthenticationWarningDismissed(object sender, EventArgs e)
+        {
+            Finished();
+
+        }
+
+        private void Rdp_OnAuthenticationWarningDisplayed(object sender, EventArgs e)
+        {
+            Finished();
+
         }
     }
 }

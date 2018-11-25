@@ -44,6 +44,8 @@ namespace SNETCracker
         public string[] servicesName = { };
         public string[] servicesPort = { };
 
+        public long scanPortsSumCount = 0;
+
         private Dictionary<string, ServiceModel> services = new Dictionary<string, ServiceModel>();//服务列表
         private Dictionary<string, HashSet<string>> dics = new Dictionary<string, HashSet<string>>();//字典列表
         public ConcurrentBag<string> list_cracker = new ConcurrentBag<string>();
@@ -92,7 +94,7 @@ namespace SNETCracker
             }
             this.txt_log.SelectionColor = color;
             this.txt_log.HideSelection = false;
-            this.txt_log.AppendText(text+"\r\n");
+            this.txt_log.AppendText(text+Environment.NewLine);
         }
         /// <summary> 
         /// 显示错误日志 
@@ -161,7 +163,7 @@ namespace SNETCracker
                 }
                 this.stxt_crackerSuccessCount.Text = successCount + "";
                 this.stxt_useTime.Text = runTime + "";
-               
+                this.tssl_notScanPortsSumCount.Text = this.scanPortsSumCount+"";
             }
             catch (Exception e) {
                 LogWarning(e.Message);
@@ -221,6 +223,7 @@ namespace SNETCracker
                 tc.Close();               
                
             }
+            Interlocked.Decrement(ref scanPortsSumCount);
         }
         
         private void crackerService(string crakerstring,string username,string password)
@@ -412,16 +415,21 @@ namespace SNETCracker
                 stp =new SmartThreadPool();
                 stp.MaxThreads = maxThread;
                 creackerSumCount = 0;
-                //计算总数
+                scanPortsSumCount = 0;
+               
+
+                //计算端口扫描总数
                 if (isScanport)
                 {
                     foreach (string serviceName in this.services_list.CheckedItems)
                     {
                         string[] ports = this.services[serviceName].Port.Split(',');
-                        creackerSumCount += this.list_target.Count * ports.Length;
+                        scanPortsSumCount += this.list_target.Count * ports.Length;
                     }
                 }
-                       
+                //更新状态
+                this.Invoke(new update(updateStatus));
+
                 foreach (string serviceName in this.services_list.CheckedItems) {
                     string[] ports = this.services[serviceName].Port.Split(',');
                     foreach (string sport in ports)
@@ -455,7 +463,7 @@ namespace SNETCracker
                 {
                     foreach (string serviceName in this.services_list.CheckedItems)
                     {
-                        creackerSumCount += list_cracker.Count*this.services_list.CheckedItems.Count*this.services[serviceName].ListUserName.Count*this.services[serviceName].ListPassword.Count;
+                        creackerSumCount += list_cracker.Count*this.services[serviceName].ListUserName.Count*this.services[serviceName].ListPassword.Count;
                     }
                 }
                 else
@@ -756,6 +764,7 @@ namespace SNETCracker
             catch (Exception e)
             {
                 FileTool.log(ip + ":" + port + "-RDP操作异常-" + e.Message);
+                LogWarning(ip + ":" + port + "-RDP操作异常-" + e.Message);
                 server.isDisConnected = true;
                 server.isEndMRE.Set();
             }
@@ -767,14 +776,16 @@ namespace SNETCracker
         private void ClearRDP(RdpClient rdp){
             try
             {
-                this.rdp_panle.Controls.Remove(rdp);
                 if (rdp.IsDisposed == false)
                 {
                     rdp.Dispose();
                 }
+                this.rdp_panle.Controls.Remove(rdp);
+                
             }
             catch (Exception e) {
                 FileTool.log("RDP资源清理异常-" + e.Message);
+                LogWarning("RDP资源清理异常-" + e.Message);
             }
         }
 
@@ -1073,7 +1084,7 @@ namespace SNETCracker
             return sid;
         }
         
-        private static int version = 20181113;
+        private static int version = 20181125;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {

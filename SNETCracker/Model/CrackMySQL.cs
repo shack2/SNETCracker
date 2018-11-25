@@ -17,7 +17,7 @@ namespace SNETCracker.Model
         public override Server creack(String ip, int port, String username, String password, int timeOut)
         {
             MySqlConnection conn = new MySqlConnection();
-            
+            MySqlConnectionStringBuilder ms = new MySqlConnectionStringBuilder();
             Server server = new Server();
 
             try
@@ -27,7 +27,7 @@ namespace SNETCracker.Model
                     password = "";
                 }
                 conn.ConnectionString = "server=" + ip + ";user id=" + username + ";password=" + password + ";pooling=false;ConnectionTimeout=" + timeOut;
-                
+
                 conn.Open();
                 
                 server.isSuccess = ConnectionState.Open.Equals(conn.State);
