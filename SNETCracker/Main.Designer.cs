@@ -86,6 +86,8 @@
             this.stxt_crackerSuccessCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
             this.stxt_speed = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tssl_notScanPortsSumCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.bt_timer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tsmi_options = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,8 +101,6 @@
             this.tsmi_help_version = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_help_support = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tssl_notScanPortsSumCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.cms_lvw.SuspendLayout();
@@ -437,6 +437,7 @@
             this.list_lvw.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.list_lvw.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.list_lvw.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.col_id,
             this.col_ip,
@@ -449,7 +450,7 @@
             this.list_lvw.ContextMenuStrip = this.cms_lvw;
             this.list_lvw.FullRowSelect = true;
             this.list_lvw.GridLines = true;
-            this.list_lvw.Location = new System.Drawing.Point(3, 15);
+            this.list_lvw.Location = new System.Drawing.Point(6, 15);
             this.list_lvw.Name = "list_lvw";
             this.list_lvw.Size = new System.Drawing.Size(870, 394);
             this.list_lvw.TabIndex = 0;
@@ -473,6 +474,7 @@
             // col_port
             // 
             this.col_port.Text = "端口";
+            this.col_port.Width = 80;
             // 
             // col_username
             // 
@@ -492,6 +494,7 @@
             // col_useTime
             // 
             this.col_useTime.Text = "用时[毫秒]";
+            this.col_useTime.Width = 100;
             // 
             // cms_lvw
             // 
@@ -580,7 +583,7 @@
             // tools_proBar
             // 
             this.tools_proBar.Name = "tools_proBar";
-            this.tools_proBar.Size = new System.Drawing.Size(200, 16);
+            this.tools_proBar.Size = new System.Drawing.Size(150, 16);
             // 
             // stxt_percent
             // 
@@ -647,6 +650,18 @@
             this.stxt_speed.Name = "stxt_speed";
             this.stxt_speed.Size = new System.Drawing.Size(15, 17);
             this.stxt_speed.Text = "0";
+            // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(116, 17);
+            this.toolStripStatusLabel4.Text = "剩余端口扫描次数：";
+            // 
+            // tssl_notScanPortsSumCount
+            // 
+            this.tssl_notScanPortsSumCount.Name = "tssl_notScanPortsSumCount";
+            this.tssl_notScanPortsSumCount.Size = new System.Drawing.Size(15, 17);
+            this.tssl_notScanPortsSumCount.Text = "0";
             // 
             // bt_timer
             // 
@@ -749,18 +764,6 @@
             this.tsmi_tools.Size = new System.Drawing.Size(48, 21);
             this.tsmi_tools.Text = "工 具";
             // 
-            // toolStripStatusLabel4
-            // 
-            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(116, 17);
-            this.toolStripStatusLabel4.Text = "剩余端口扫描次数：";
-            // 
-            // tssl_notScanPortsSumCount
-            // 
-            this.tssl_notScanPortsSumCount.Name = "tssl_notScanPortsSumCount";
-            this.tssl_notScanPortsSumCount.Size = new System.Drawing.Size(15, 17);
-            this.tssl_notScanPortsSumCount.Text = "0";
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -774,7 +777,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta20 by shack2";
+            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta21 by shack2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Shown += new System.EventHandler(this.Main_Shown);
             this.groupBox1.ResumeLayout(false);

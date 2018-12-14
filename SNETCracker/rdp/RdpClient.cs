@@ -51,7 +51,7 @@ namespace MyRDP
                 this.Height =1;
                 this.Width = 1;
                 this.Password = pass;
-                this.ColorDepth =4 ;
+                this.ColorDepth =8 ;
                 this.Server = ip;
                 this.UserName = user;
                 this.AdvancedSettings4.EnableMouse = 0;
