@@ -21,7 +21,6 @@ namespace SNETCracker
     public partial class Main : Form
     {
 
-
         private HashSet<string> list_username = new HashSet<string>();
         private HashSet<string> list_password = new HashSet<string>();
         private HashSet<string> list_target = new HashSet<string>();
@@ -798,6 +797,7 @@ namespace SNETCracker
             server.isEndMRE.WaitOne();
             Server newserver = new Server();
             newserver.isSuccess = server.isSuccess;
+
             this.rdp_panle.Invoke(new deleteClearRDP(ClearRDP), server.client);
             return newserver;
         }
@@ -817,6 +817,7 @@ namespace SNETCracker
             allCrackCount = 0;
         }
 
+        /*使用转换过的dll后，此方法废弃
         private void regDLL() {
             Process p = null;
             try
@@ -837,11 +838,11 @@ namespace SNETCracker
                 }
             }
 
-        }
+        }*/
         private void Main_Shown(object sender, EventArgs e)
         {
             this.Text += " "+Main.version + "";
-            regDLL();
+           
             this.cbox_reTry.SelectedIndex = 0;
             this.cbox_threadSize.SelectedIndex = 10;
             this.cbox_timeOut.SelectedIndex = 2;
@@ -1094,7 +1095,7 @@ namespace SNETCracker
             return sid;
         }
 
-        private static int version = 20181214;
+        private static int version = 20190321;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {
@@ -1177,5 +1178,7 @@ namespace SNETCracker
             MessageBox.Show("ok");
            
         }
+
+     
     }
 }
