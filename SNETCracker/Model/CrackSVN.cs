@@ -9,8 +9,8 @@ namespace SNETCracker.Model
 
         }
         public override Server creack(String ip, int port,String username,String password,int timeOut) {
-
-            throw new Exception("暂未实现此功能！");
+            Server server = new Server();
+            return server;
         }
     }
 }

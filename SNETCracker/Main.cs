@@ -278,6 +278,7 @@ namespace SNETCracker
                                 }
                                 if (this.crackerOneCount && cconce)
                                 {
+                                    Interlocked.Increment(ref allCrackCount);
                                     break;
                                 }
                                 Stopwatch sw = new Stopwatch();
@@ -418,7 +419,7 @@ namespace SNETCracker
                 creackerSumCount = 0;
                 scanPortsSumCount = 0;
                
-
+                
                 //计算端口扫描总数
                 if (isScanport)
                 {
@@ -1095,7 +1096,7 @@ namespace SNETCracker
             return sid;
         }
 
-        private static int version = 20190321;
+        private static int version = 20190322;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {

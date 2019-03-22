@@ -815,7 +815,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta22 20190321 by shack2";
+            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta23 20190322 by shack2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Shown += new System.EventHandler(this.Main_Shown);
             this.groupBox1.ResumeLayout(false);

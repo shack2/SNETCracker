@@ -69,7 +69,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\rdp\AxMSTSCLib.dll</HintPath>
     </Reference>
-    <Reference Include="ChilkatDotNet4">
+    <Reference Include="ChilkatDotNet4, Version=9.5.0.75, Culture=neutral, PublicKeyToken=eb5fc1fc52ef09bd, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\ChilkatDotNet4.dll</HintPath>
     </Reference>
     <Reference Include="Enyim.Caching, Version=2.12.0.0, Culture=neutral, PublicKeyToken=cec98615db04012e, processorArchitecture=MSIL">
@@ -141,6 +142,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\rebex\Rebex.Terminal.dll</HintPath>
     </Reference>
+    <Reference Include="SharpCifs.shack2.SmbClient">
+      <HintPath>libs\smb\SharpCifs.shack2.SmbClient.dll</HintPath>
+    </Reference>
     <Reference Include="StackExchange.Redis, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\redis\StackExchange.Redis-1.2.6\StackExchange.Redis.dll</HintPath>
@@ -187,6 +191,7 @@
     <Compile Include="Model\CrackOracle.cs" />
     <Compile Include="Model\CrackPostgreSQL.cs" />
     <Compile Include="Model\CrackRedis.cs" />
+    <Compile Include="Model\CrackSMB.cs" />
     <Compile Include="Model\CrackTelnet.cs" />
     <Compile Include="Model\CrackFTP.cs" />
     <Compile Include="Model\CrackIMAP_SSL.cs" />
