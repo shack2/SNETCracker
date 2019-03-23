@@ -290,10 +290,13 @@ namespace SNETCracker
                                 else
                                 {
                                     CrackService cs = null;
-                                    Type type = Type.GetType("SNETCracker.Model.Crack" + serviceName);
-                                    if (type != null)
-                                    {
-                                        cs = (CrackService)Activator.CreateInstance(type);
+                                    if (cs == null) {
+                                        Type type = Type.GetType("SNETCracker.Model.Crack" + serviceName);
+                                        if (type != null)
+                                        {
+                                            cs = (CrackService)Activator.CreateInstance(type);
+                                        
+                                        }
                                     }
                                     server = cs.creack(ip, port, username, password, timeOut);
 
@@ -793,14 +796,16 @@ namespace SNETCracker
 
         private Server creackRDP(String ip, int port,String username, String password, int timeout)
         {
-            
-            Server server = (Server)this.rdp_panle.Invoke(new addRDPdelegate(addRDPClient), ip, port, username, password, timeout);
-            server.isEndMRE.WaitOne();
-            Server newserver = new Server();
-            newserver.isSuccess = server.isSuccess;
-
-            this.rdp_panle.Invoke(new deleteClearRDP(ClearRDP), server.client);
-            return newserver;
+            Server server = new Server();
+            try {
+                server = (Server)this.rdp_panle.Invoke(new addRDPdelegate(addRDPClient), ip, port, username, password, timeout);
+                server.isEndMRE.WaitOne();
+                server.client.Disconnect();
+                this.rdp_panle.Invoke(new deleteClearRDP(ClearRDP), server.client);
+            }catch(Exception e){
+                FileTool.log("creackRDP错误：" + e.Message);
+            }
+            return server;
         }
       
         private void btn_cracker_Click(object sender, EventArgs e)
@@ -1096,7 +1101,7 @@ namespace SNETCracker
             return sid;
         }
 
-        private static int version = 20190322;
+        private static int version = 20190323;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {

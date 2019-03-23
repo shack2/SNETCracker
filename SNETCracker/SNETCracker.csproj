@@ -67,7 +67,7 @@
   <ItemGroup>
     <Reference Include="AxMSTSCLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\rdp\AxMSTSCLib.dll</HintPath>
+      <HintPath>libs\rdp_win7\AxMSTSCLib.dll</HintPath>
     </Reference>
     <Reference Include="ChilkatDotNet4, Version=9.5.0.75, Culture=neutral, PublicKeyToken=eb5fc1fc52ef09bd, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
@@ -81,10 +81,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\memcached\Enyim.Caching.Log4NetAdapter.dll</HintPath>
     </Reference>
-    <Reference Include="FluentFTP">
+    <Reference Include="FluentFTP, Version=20.0.0.0, Culture=neutral, PublicKeyToken=f4af092b1d8df44f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\FluentFTP.dll</HintPath>
     </Reference>
-    <Reference Include="LumiSoft.Net, Version=4.5.6548.41317, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="LumiSoft.Net, Version=4.5.7021.25449, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\LumiSoft.Net.dll</HintPath>
     </Reference>
@@ -113,7 +114,7 @@
     <Reference Include="MSTSCLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>libs\rdp\MSTSCLib.dll</HintPath>
+      <HintPath>libs\rdp_win7\MSTSCLib.dll</HintPath>
     </Reference>
     <Reference Include="MySql.Data, Version=6.2.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

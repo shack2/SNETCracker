@@ -57,7 +57,7 @@ namespace SNETCracker.Model
            
            Server server = new Server();
            try{
-               bool success = ssh.UnlockComponent("blh6lp.SS10899_Oi30mPCYGbnd");
+               bool success = ssh.UnlockComponent("u3ygKY.SS10299_BZWRWO736dmG");
                if (success != true)
                {
                    throw new Exception("SSH组件解锁失败！");
