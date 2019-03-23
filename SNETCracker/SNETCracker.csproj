@@ -69,7 +69,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\rdp_win7\AxMSTSCLib.dll</HintPath>
     </Reference>
-    <Reference Include="ChilkatDotNet4, Version=9.5.0.75, Culture=neutral, PublicKeyToken=eb5fc1fc52ef09bd, processorArchitecture=x86">
+    <Reference Include="ChilkatDotNet4, Version=9.5.0.77, Culture=neutral, PublicKeyToken=eb5fc1fc52ef09bd, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>libs\ChilkatDotNet4.dll</HintPath>
     </Reference>
