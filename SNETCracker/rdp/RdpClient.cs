@@ -10,6 +10,7 @@ namespace MyRDP
     public class RdpClient : AxMsRdpClient7NotSafeForScripting
     {
         private Server server = null;
+        public String name = "";
         public delegate void OnResponseDelegate(ResponseType type, Server server);
         public event OnResponseDelegate OnResponse;
         public System.Timers.Timer timeOutLog = new System.Timers.Timer();
@@ -36,13 +37,28 @@ namespace MyRDP
 
         private void Finished()
         {
+            try
+            {
+                if (this.Connected != 0)
+                {
+                    this.Disconnect();
+                }   
+            }
+            catch (Exception ce)
+            {
+                FileTool.log("Finished:" + ce.Message);
+            }
             OnResponse(ResponseType.Finished, server);
+            
         }
         private void TimeOut(object sender, ElapsedEventArgs e)
         {
             this.timeOutLog.Stop();
             Finished();
         }
+
+
+        
 
         public delegate void deConnect(string ip, int port, string user, string pass);
         public void Connect(string ip, int port, string user, string pass)
@@ -54,21 +70,17 @@ namespace MyRDP
                 this.timeOutLog.Start();
                 this.Server = ip;
                 this.ColorDepth = 1;
-                
                 this.AdvancedSettings.Compress = 1;
                 this.Password = pass;
-                this.ColorDepth = 1;
-                this.Server = ip;
                 this.UserName = user;
-                this.AdvancedSettings7.Compress = 1;
-                this.AdvancedSettings7.EnableMouse = 0;
-                this.AdvancedSettings7.EnableWindowsKey = 0;
                 this.AdvancedSettings7.RDPPort = port;
                 this.AdvancedSettings7.ClearTextPassword = pass;
-                this.AdvancedSettings7.EncryptionEnabled = 0;
                 this.AdvancedSettings7.EnableCredSspSupport = true;
-                this.AdvancedSettings7.ConnectToAdministerServer=true;
+                this.AdvancedSettings7.ConnectToAdministerServer = true;
 
+                this.AdvancedSettings7.EnableMouse = 0;
+                this.AdvancedSettings7.EnableWindowsKey = 0;
+                this.AdvancedSettings7.EncryptionEnabled = 0;
                 this.AdvancedSettings7.AuthenticationLevel = 0;
                 this.AdvancedSettings7.RedirectClipboard = false;
                 this.AdvancedSettings7.overallConnectionTimeout = server.timeout;
@@ -84,8 +96,9 @@ namespace MyRDP
                 sc.WarnAboutSendingCredentials = false;
                 sc.WarnAboutClipboardRedirection = false;
                 sc.ShowRedirectionWarningDialog = false;
+                
                 this.Connect();
-           
+                
             }
             catch (Exception e)
             {
@@ -108,13 +121,16 @@ namespace MyRDP
         {
             this.server.isSuccess = true;
             this.server.banner = this.Version;
+            
             Finished();
         }
 
         private void Rdp_OnLoginError(object sender, IMsTscAxEvents_OnLogonErrorEvent e)
         {
             this.server.isSuccess = false;
+            
             Finished();
+            
         }
 
         private void Rdp_OnWaring(object sender, IMsTscAxEvents_OnWarningEvent e)

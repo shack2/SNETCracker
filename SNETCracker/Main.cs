@@ -32,9 +32,6 @@ namespace SNETCracker
         private int retryCount = 0;
         private int maxThread = 50;
         private int timeOut = 5;
-        private string dic_username_path = "";
-        private string dic_password_path = "";
-        private string dic_target_path = "";
 
         private Boolean crackerOneCount = true;//只检查一个账户
         public int successCount = 0;
@@ -89,7 +86,7 @@ namespace SNETCracker
         /// <param name="text">显示文本</param> 
         public void LogAppend(Color color, string text)
         {
-            if (this.txt_log.Text.Length > 100000) {
+            if (this.txt_log.Text.Length > 10000) {
                 this.txt_log.Clear();
             }
             this.txt_log.SelectionColor = color;
@@ -449,7 +446,7 @@ namespace SNETCracker
                             }
                             else {
                                 stp.QueueWorkItem<string, string, int>(ScanPort, ip, serviceName, port);
-                                stp.WaitFor(1000);
+                                stp.WaitFor(1);
                             }
                         }
                     }
@@ -516,7 +513,7 @@ namespace SNETCracker
                                 if (cracker.EndsWith(serviceName))
                                 {
                                     stp.QueueWorkItem<string, string, string>(crackerService, cracker, username, pass); 
-                                    stp.WaitFor(1000);
+                                    stp.WaitFor(1);
                                 }
                             }
                         }
@@ -537,8 +534,8 @@ namespace SNETCracker
         public void stopCraker() {
             if (stp != null&& !stp.IsShuttingdown&&this.crackerThread!=null) {
                 LogWarning("等待线程结束...");
-                this.crackerThread.Abort();
                 stp.Shutdown();
+                this.crackerThread.Abort();
                 while (stp.InUseThreads>0) {
                     Thread.Sleep(50);
                 }
@@ -553,7 +550,7 @@ namespace SNETCracker
         }
         private Boolean initDic() {
 
-            if ("".Equals(this.txt_target.Text) && "".Equals(this.dic_target_path))
+            if ("".Equals(this.txt_target.Text))
             {
                 MessageBox.Show("请设置需要检查的目标的IP地址或域名！");
                 return false;
@@ -649,25 +646,30 @@ namespace SNETCracker
             //加载自定义字典字典
             if (notAutoSelectDic)
             {
-                if (!"".Equals(this.dic_username_path))
+                if (this.txt_username.Text.EndsWith(".txt"))
                 {
-                    this.list_username = FileTool.readFileToList(this.dic_username_path);
+                    this.list_username = FileTool.readFileToList(this.txt_username.Text);
+                }
+                else {
+                    if (this.txt_username.Text.Length > 0)
+                    {
+                        this.list_username.Clear();
+                        this.list_username.Add(this.txt_username.Text);
+                    }
                 }
 
-                if (!"".Equals(this.dic_password_path))
+                if (this.txt_password.Text.EndsWith(".txt"))
                 {
-                    this.list_password = FileTool.readFileToList(this.dic_password_path);
+                    this.list_password = FileTool.readFileToList(this.txt_password.Text);
                 }
-                if (this.txt_username.Text.Length > 0)
-                {
-                    this.list_username.Clear();
-                    this.list_username.Add(this.txt_username.Text);
+                else {
+                    if (this.txt_password.Text.Length > 0)
+                    {
+                        this.list_password.Clear();
+                        this.list_password.Add(this.txt_password.Text);
+                    }
                 }
-                if (this.txt_password.Text.Length > 0)
-                {
-                    this.list_password.Clear();
-                    this.list_password.Add(this.txt_password.Text);
-                }
+               
                 if (this.list_username.Count <= 0)
                 {
                     MessageBox.Show("请设置需要检查的用户名！");
@@ -675,7 +677,7 @@ namespace SNETCracker
                 }
                 else if (this.list_password.Count <= 0)
                 {
-                    MessageBox.Show("请设置检查的密码字典！");
+                    MessageBox.Show("请设置检查的密码！");
                     return false;
                 }
             }
@@ -747,8 +749,8 @@ namespace SNETCracker
             }
             
         }
+      
         delegate Server addRDPdelegate(String ip, int port,String username, String password,int timeout);
-
         private Server addRDPClient(String ip,int port,String username,String password,int timeout) {
             Server server = new Server();
             RdpClient rdp = null;
@@ -761,6 +763,7 @@ namespace SNETCracker
                 server.username = username;
                 server.password = password;
                 rdp = new RdpClient(server);
+                rdp.Location = new Point(this.rdp_panle.Location.X+new Random().Next(50), this.rdp_panle.Location.Y+new Random().Next(100));
                 server.client = rdp;
                 this.rdp_panle.Controls.Add(rdp);
                 rdp.OnResponse += rdpResult;
@@ -781,12 +784,8 @@ namespace SNETCracker
         private void ClearRDP(RdpClient rdp){
             try
             {
-                if (rdp.IsDisposed == false)
-                {
-                    rdp.Dispose();
-                }
+                rdp.Dispose();
                 this.rdp_panle.Controls.Remove(rdp);
-                
             }
             catch (Exception e) {
                 FileTool.log("RDP资源清理异常-" + e.Message);
@@ -800,21 +799,25 @@ namespace SNETCracker
             try {
                 server = (Server)this.rdp_panle.Invoke(new addRDPdelegate(addRDPClient), ip, port, username, password, timeout);
                 server.isEndMRE.WaitOne();
-                server.client.Disconnect();
-                this.rdp_panle.Invoke(new deleteClearRDP(ClearRDP), server.client);
+                this.rdp_panle.BeginInvoke(new deleteClearRDP(ClearRDP), server.client);
             }catch(Exception e){
                 FileTool.log("creackRDP错误：" + e.Message);
             }
             return server;
         }
-      
+
+
+       
+
         private void btn_cracker_Click(object sender, EventArgs e)
         {
             this.btn_cracker.Enabled = false;
             this.list_success_username.Clear();
             this.services_list.Enabled = false;
+           
             crackerThread = new Thread(cracker);
-            crackerThread.Start(); 
+            crackerThread.Start();
+           
         }
 
         private void initStatusCount()
@@ -870,7 +873,7 @@ namespace SNETCracker
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 if (!string.IsNullOrEmpty(ofd.FileName)) {
-                    this.dic_username_path = ofd.FileName;
+                    this.txt_username.Text = ofd.FileName;
                     LogInfo("导入用户名成功！");
                 }
             }
@@ -884,7 +887,7 @@ namespace SNETCracker
                 
                 if (!string.IsNullOrEmpty(ofd.FileName))
                 {
-                    this.dic_password_path = ofd.FileName;
+                    this.txt_password.Text = ofd.FileName;
                     LogInfo("导入密码字典成功！");
                 }
             }
@@ -1101,7 +1104,7 @@ namespace SNETCracker
             return sid;
         }
 
-        private static int version = 20190323;
+        private static int version = 20190324;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {

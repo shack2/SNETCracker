@@ -540,7 +540,7 @@
             // rdp_panle
             // 
             this.rdp_panle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.rdp_panle.Location = new System.Drawing.Point(110, 14);
+            this.rdp_panle.Location = new System.Drawing.Point(208, 12);
             this.rdp_panle.Name = "rdp_panle";
             this.rdp_panle.Size = new System.Drawing.Size(1, 1);
             this.rdp_panle.TabIndex = 12;
@@ -764,7 +764,6 @@
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.rdp_panle);
             this.groupBox3.Controls.Add(this.splitContainer1);
             this.groupBox3.Location = new System.Drawing.Point(8, 25);
             this.groupBox3.Name = "groupBox3";
@@ -808,6 +807,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(875, 677);
+            this.Controls.Add(this.rdp_panle);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.bt_status);
             this.Controls.Add(this.groupBox2);
@@ -815,7 +815,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta24 by shack2";
+            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta25 by shack2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Shown += new System.EventHandler(this.Main_Shown);
             this.groupBox1.ResumeLayout(false);

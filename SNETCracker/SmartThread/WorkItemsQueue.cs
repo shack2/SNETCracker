@@ -633,7 +633,7 @@ namespace Amib.Threading.Internal
         {
             if(_isDisposed)
             {
-                throw new ObjectDisposedException(GetType().ToString(), "The SmartThreadPool has been shutdown");
+                //throw new ObjectDisposedException(GetType().ToString(), "The SmartThreadPool has been shutdown");
             }
         }
 
