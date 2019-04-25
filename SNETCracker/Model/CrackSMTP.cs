@@ -1,6 +1,6 @@
-﻿using LumiSoft.Net.AUTH;
+﻿using System;
+using LumiSoft.Net.AUTH;
 using LumiSoft.Net.SMTP.Client;
-using System;
 using Tools;
 
 namespace SNETCracker.Model
@@ -11,6 +11,7 @@ namespace SNETCracker.Model
         {
 
         }
+
         public override Server creack(String ip, int port,String username,String password,int timeOut) {
                 SMTP_Client conn = null;
             Server server = new Server();

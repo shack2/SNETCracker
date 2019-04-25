@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.services_list = new System.Windows.Forms.CheckedListBox();
             this.chk_crackerOneCount = new System.Windows.Forms.CheckBox();
             this.chk_notAutoSelectDic = new System.Windows.Forms.CheckBox();
             this.chk_isScanPort = new System.Windows.Forms.CheckBox();
@@ -50,10 +49,10 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.services_list = new System.Windows.Forms.CheckedListBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txt_log = new System.Windows.Forms.RichTextBox();
             this.list_lvw = new System.Windows.Forms.ListView();
@@ -86,6 +85,8 @@
             this.stxt_crackerSuccessCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
             this.stxt_speed = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tssl_notScanPortsSumCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.bt_timer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.tsmi_options = new System.Windows.Forms.ToolStripMenuItem();
@@ -99,18 +100,24 @@
             this.tsmi_help_version = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_help_support = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmi_tools = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tssl_notScanPortsSumCount = new System.Windows.Forms.ToolStripStatusLabel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.cms_lvw.SuspendLayout();
             this.bt_status.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.services_list);
             this.groupBox1.Controls.Add(this.chk_crackerOneCount);
             this.groupBox1.Controls.Add(this.chk_notAutoSelectDic);
             this.groupBox1.Controls.Add(this.chk_isScanPort);
@@ -130,31 +137,21 @@
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBox1.Location = new System.Drawing.Point(0, 25);
+            this.groupBox1.Location = new System.Drawing.Point(5, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(876, 138);
+            this.groupBox1.Size = new System.Drawing.Size(743, 125);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            // 
-            // services_list
-            // 
-            this.services_list.FormattingEnabled = true;
-            this.services_list.Location = new System.Drawing.Point(41, 14);
-            this.services_list.Name = "services_list";
-            this.services_list.Size = new System.Drawing.Size(107, 116);
-            this.services_list.TabIndex = 1;
             // 
             // chk_crackerOneCount
             // 
             this.chk_crackerOneCount.AutoSize = true;
             this.chk_crackerOneCount.Checked = true;
             this.chk_crackerOneCount.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chk_crackerOneCount.Location = new System.Drawing.Point(750, 19);
+            this.chk_crackerOneCount.Location = new System.Drawing.Point(374, 20);
             this.chk_crackerOneCount.Name = "chk_crackerOneCount";
             this.chk_crackerOneCount.Size = new System.Drawing.Size(108, 16);
             this.chk_crackerOneCount.TabIndex = 5;
@@ -167,11 +164,11 @@
             this.chk_notAutoSelectDic.AutoSize = true;
             this.chk_notAutoSelectDic.Checked = true;
             this.chk_notAutoSelectDic.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chk_notAutoSelectDic.Location = new System.Drawing.Point(433, 102);
+            this.chk_notAutoSelectDic.Location = new System.Drawing.Point(305, 97);
             this.chk_notAutoSelectDic.Name = "chk_notAutoSelectDic";
-            this.chk_notAutoSelectDic.Size = new System.Drawing.Size(156, 16);
+            this.chk_notAutoSelectDic.Size = new System.Drawing.Size(204, 16);
             this.chk_notAutoSelectDic.TabIndex = 10;
-            this.chk_notAutoSelectDic.Text = "不根据服务自动选择字典";
+            this.chk_notAutoSelectDic.Text = "不根据检查服务自动选择密码字典";
             this.chk_notAutoSelectDic.UseVisualStyleBackColor = true;
             this.chk_notAutoSelectDic.CheckedChanged += new System.EventHandler(this.chk_notAutoSelectDic_CheckedChanged);
             // 
@@ -180,7 +177,7 @@
             this.chk_isScanPort.AutoSize = true;
             this.chk_isScanPort.Checked = true;
             this.chk_isScanPort.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chk_isScanPort.Location = new System.Drawing.Point(517, 22);
+            this.chk_isScanPort.Location = new System.Drawing.Point(657, 18);
             this.chk_isScanPort.Name = "chk_isScanPort";
             this.chk_isScanPort.Size = new System.Drawing.Size(72, 16);
             this.chk_isScanPort.TabIndex = 3;
@@ -195,7 +192,7 @@
             "0",
             "1",
             "2"});
-            this.cbox_reTry.Location = new System.Drawing.Point(663, 100);
+            this.cbox_reTry.Location = new System.Drawing.Point(578, 93);
             this.cbox_reTry.Name = "cbox_reTry";
             this.cbox_reTry.Size = new System.Drawing.Size(61, 20);
             this.cbox_reTry.TabIndex = 11;
@@ -214,7 +211,7 @@
             "40",
             "50",
             "60"});
-            this.cbox_timeOut.Location = new System.Drawing.Point(663, 19);
+            this.cbox_timeOut.Location = new System.Drawing.Point(578, 16);
             this.cbox_timeOut.Name = "cbox_timeOut";
             this.cbox_timeOut.Size = new System.Drawing.Size(61, 20);
             this.cbox_timeOut.TabIndex = 4;
@@ -253,7 +250,7 @@
             "700",
             "800",
             "1000"});
-            this.cbox_threadSize.Location = new System.Drawing.Point(663, 58);
+            this.cbox_threadSize.Location = new System.Drawing.Point(578, 53);
             this.cbox_threadSize.Name = "cbox_threadSize";
             this.cbox_threadSize.Size = new System.Drawing.Size(61, 20);
             this.cbox_threadSize.TabIndex = 9;
@@ -261,9 +258,9 @@
             // 
             // btn_stopCracker
             // 
-            this.btn_stopCracker.Location = new System.Drawing.Point(750, 97);
+            this.btn_stopCracker.Location = new System.Drawing.Point(657, 90);
             this.btn_stopCracker.Name = "btn_stopCracker";
-            this.btn_stopCracker.Size = new System.Drawing.Size(108, 23);
+            this.btn_stopCracker.Size = new System.Drawing.Size(72, 23);
             this.btn_stopCracker.TabIndex = 2;
             this.btn_stopCracker.Text = "停止检查";
             this.btn_stopCracker.UseVisualStyleBackColor = true;
@@ -271,9 +268,9 @@
             // 
             // btn_cracker
             // 
-            this.btn_cracker.Location = new System.Drawing.Point(750, 56);
+            this.btn_cracker.Location = new System.Drawing.Point(657, 51);
             this.btn_cracker.Name = "btn_cracker";
-            this.btn_cracker.Size = new System.Drawing.Size(108, 23);
+            this.btn_cracker.Size = new System.Drawing.Size(72, 23);
             this.btn_cracker.TabIndex = 2;
             this.btn_cracker.Text = "开始检查";
             this.btn_cracker.UseVisualStyleBackColor = true;
@@ -281,27 +278,27 @@
             // 
             // btn_importPassword
             // 
-            this.btn_importPassword.Location = new System.Drawing.Point(348, 100);
+            this.btn_importPassword.Location = new System.Drawing.Point(218, 93);
             this.btn_importPassword.Name = "btn_importPassword";
             this.btn_importPassword.Size = new System.Drawing.Size(67, 23);
             this.btn_importPassword.TabIndex = 2;
-            this.btn_importPassword.Text = "导 入";
+            this.btn_importPassword.Text = "导入密码";
             this.btn_importPassword.UseVisualStyleBackColor = true;
             this.btn_importPassword.Click += new System.EventHandler(this.btn_importPassword_Click);
             // 
             // btn_importUername
             // 
-            this.btn_importUername.Location = new System.Drawing.Point(348, 58);
+            this.btn_importUername.Location = new System.Drawing.Point(218, 51);
             this.btn_importUername.Name = "btn_importUername";
             this.btn_importUername.Size = new System.Drawing.Size(67, 23);
             this.btn_importUername.TabIndex = 2;
-            this.btn_importUername.Text = "导 入";
+            this.btn_importUername.Text = "导入账户";
             this.btn_importUername.UseVisualStyleBackColor = true;
             this.btn_importUername.Click += new System.EventHandler(this.btn_importUername_Click);
             // 
             // btn_importList
             // 
-            this.btn_importList.Location = new System.Drawing.Point(433, 18);
+            this.btn_importList.Location = new System.Drawing.Point(305, 16);
             this.btn_importList.Name = "btn_importList";
             this.btn_importList.Size = new System.Drawing.Size(63, 23);
             this.btn_importList.TabIndex = 2;
@@ -311,45 +308,45 @@
             // 
             // txt_username_ext
             // 
-            this.txt_username_ext.Location = new System.Drawing.Point(502, 58);
+            this.txt_username_ext.Location = new System.Drawing.Point(374, 52);
             this.txt_username_ext.Name = "txt_username_ext";
-            this.txt_username_ext.Size = new System.Drawing.Size(87, 21);
+            this.txt_username_ext.Size = new System.Drawing.Size(133, 21);
             this.txt_username_ext.TabIndex = 8;
             // 
             // txt_password
             // 
-            this.txt_password.Location = new System.Drawing.Point(214, 101);
+            this.txt_password.Location = new System.Drawing.Point(54, 93);
             this.txt_password.Name = "txt_password";
-            this.txt_password.Size = new System.Drawing.Size(128, 21);
+            this.txt_password.Size = new System.Drawing.Size(158, 21);
             this.txt_password.TabIndex = 7;
             // 
             // txt_username
             // 
-            this.txt_username.Location = new System.Drawing.Point(213, 58);
+            this.txt_username.Location = new System.Drawing.Point(53, 52);
             this.txt_username.Name = "txt_username";
-            this.txt_username.Size = new System.Drawing.Size(129, 21);
+            this.txt_username.Size = new System.Drawing.Size(159, 21);
             this.txt_username.TabIndex = 6;
             // 
             // txt_target
             // 
-            this.txt_target.Location = new System.Drawing.Point(214, 20);
+            this.txt_target.Location = new System.Drawing.Point(54, 16);
             this.txt_target.Name = "txt_target";
-            this.txt_target.Size = new System.Drawing.Size(202, 21);
+            this.txt_target.Size = new System.Drawing.Size(231, 21);
             this.txt_target.TabIndex = 2;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(610, 105);
+            this.label8.Location = new System.Drawing.Point(531, 98);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(47, 12);
+            this.label8.Size = new System.Drawing.Size(41, 12);
             this.label8.TabIndex = 0;
-            this.label8.Text = "重 试：";
+            this.label8.Text = "重试：";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(431, 61);
+            this.label5.Location = new System.Drawing.Point(303, 56);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(65, 12);
             this.label5.TabIndex = 0;
@@ -358,85 +355,82 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(610, 22);
+            this.label4.Location = new System.Drawing.Point(531, 19);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(47, 12);
+            this.label4.Size = new System.Drawing.Size(41, 12);
             this.label4.TabIndex = 0;
-            this.label4.Text = "超 时：";
+            this.label4.Text = "超时：";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(610, 60);
+            this.label3.Location = new System.Drawing.Point(531, 55);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(47, 12);
+            this.label3.Size = new System.Drawing.Size(41, 12);
             this.label3.TabIndex = 0;
-            this.label3.Text = "线 程：";
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(14, 16);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(21, 100);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "\r\n检 \r\n查 \r\n服\r\n 务";
+            this.label3.Text = "线程：";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(160, 106);
+            this.label7.Location = new System.Drawing.Point(6, 98);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(47, 12);
+            this.label7.Size = new System.Drawing.Size(41, 12);
             this.label7.TabIndex = 0;
-            this.label7.Text = "密 码：";
+            this.label7.Text = "密码：";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(160, 61);
+            this.label6.Location = new System.Drawing.Point(6, 55);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(47, 12);
+            this.label6.Size = new System.Drawing.Size(41, 12);
             this.label6.TabIndex = 0;
-            this.label6.Text = "账 户：";
+            this.label6.Text = "账户：";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(160, 23);
+            this.label1.Location = new System.Drawing.Point(6, 19);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 12);
+            this.label1.Size = new System.Drawing.Size(41, 12);
             this.label1.TabIndex = 0;
-            this.label1.Text = "目 标：";
+            this.label1.Text = "目标：";
+            // 
+            // services_list
+            // 
+            this.services_list.BackColor = System.Drawing.SystemColors.Window;
+            this.services_list.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.services_list.FormattingEnabled = true;
+            this.services_list.Location = new System.Drawing.Point(0, 0);
+            this.services_list.Name = "services_list";
+            this.services_list.Size = new System.Drawing.Size(96, 472);
+            this.services_list.TabIndex = 1;
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.txt_log);
-            this.groupBox2.Controls.Add(this.list_lvw);
-            this.groupBox2.Location = new System.Drawing.Point(0, 161);
+            this.groupBox2.Location = new System.Drawing.Point(8, 523);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(876, 491);
+            this.groupBox2.Size = new System.Drawing.Size(857, 129);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             // 
             // txt_log
             // 
-            this.txt_log.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.txt_log.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txt_log.Location = new System.Drawing.Point(3, 415);
+            this.txt_log.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txt_log.Location = new System.Drawing.Point(3, 17);
             this.txt_log.Name = "txt_log";
-            this.txt_log.Size = new System.Drawing.Size(870, 76);
+            this.txt_log.Size = new System.Drawing.Size(851, 109);
             this.txt_log.TabIndex = 1;
             this.txt_log.Text = "";
             // 
             // list_lvw
             // 
-            this.list_lvw.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.list_lvw.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.list_lvw.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.col_id,
             this.col_ip,
@@ -447,11 +441,12 @@
             this.col_banner,
             this.col_useTime});
             this.list_lvw.ContextMenuStrip = this.cms_lvw;
+            this.list_lvw.Dock = System.Windows.Forms.DockStyle.Fill;
             this.list_lvw.FullRowSelect = true;
             this.list_lvw.GridLines = true;
-            this.list_lvw.Location = new System.Drawing.Point(3, 15);
+            this.list_lvw.Location = new System.Drawing.Point(3, 17);
             this.list_lvw.Name = "list_lvw";
-            this.list_lvw.Size = new System.Drawing.Size(870, 394);
+            this.list_lvw.Size = new System.Drawing.Size(737, 319);
             this.list_lvw.TabIndex = 0;
             this.list_lvw.UseCompatibleStateImageBehavior = false;
             this.list_lvw.View = System.Windows.Forms.View.Details;
@@ -459,39 +454,42 @@
             // col_id
             // 
             this.col_id.Text = "序号";
+            this.col_id.Width = 0;
             // 
             // col_ip
             // 
             this.col_ip.Text = "IP地址";
-            this.col_ip.Width = 106;
+            this.col_ip.Width = 118;
             // 
             // col_serviceName
             // 
             this.col_serviceName.Text = "服 务";
-            this.col_serviceName.Width = 84;
+            this.col_serviceName.Width = 94;
             // 
             // col_port
             // 
             this.col_port.Text = "端口";
+            this.col_port.Width = 80;
             // 
             // col_username
             // 
             this.col_username.Text = "帐户名";
-            this.col_username.Width = 83;
+            this.col_username.Width = 112;
             // 
             // col_pass
             // 
             this.col_pass.Text = "密码";
-            this.col_pass.Width = 100;
+            this.col_pass.Width = 133;
             // 
             // col_banner
             // 
             this.col_banner.Text = "BANNER";
-            this.col_banner.Width = 100;
+            this.col_banner.Width = 104;
             // 
             // col_useTime
             // 
             this.col_useTime.Text = "用时[毫秒]";
+            this.col_useTime.Width = 82;
             // 
             // cms_lvw
             // 
@@ -542,9 +540,9 @@
             // rdp_panle
             // 
             this.rdp_panle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.rdp_panle.Location = new System.Drawing.Point(214, 9);
+            this.rdp_panle.Location = new System.Drawing.Point(208, 12);
             this.rdp_panle.Name = "rdp_panle";
-            this.rdp_panle.Size = new System.Drawing.Size(10, 10);
+            this.rdp_panle.Size = new System.Drawing.Size(1, 1);
             this.rdp_panle.TabIndex = 12;
             // 
             // bt_status
@@ -567,7 +565,7 @@
             this.tssl_notScanPortsSumCount});
             this.bt_status.Location = new System.Drawing.Point(0, 655);
             this.bt_status.Name = "bt_status";
-            this.bt_status.Size = new System.Drawing.Size(876, 22);
+            this.bt_status.Size = new System.Drawing.Size(875, 22);
             this.bt_status.TabIndex = 1;
             this.bt_status.Text = "statusStrip1";
             // 
@@ -580,7 +578,7 @@
             // tools_proBar
             // 
             this.tools_proBar.Name = "tools_proBar";
-            this.tools_proBar.Size = new System.Drawing.Size(200, 16);
+            this.tools_proBar.Size = new System.Drawing.Size(150, 16);
             // 
             // stxt_percent
             // 
@@ -648,6 +646,18 @@
             this.stxt_speed.Size = new System.Drawing.Size(15, 17);
             this.stxt_speed.Text = "0";
             // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(116, 17);
+            this.toolStripStatusLabel4.Text = "剩余端口扫描次数：";
+            // 
+            // tssl_notScanPortsSumCount
+            // 
+            this.tssl_notScanPortsSumCount.Name = "tssl_notScanPortsSumCount";
+            this.tssl_notScanPortsSumCount.Size = new System.Drawing.Size(15, 17);
+            this.tssl_notScanPortsSumCount.Text = "0";
+            // 
             // bt_timer
             // 
             this.bt_timer.Interval = 1000;
@@ -662,7 +672,7 @@
             this.tsmi_tools});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(876, 25);
+            this.menuStrip1.Size = new System.Drawing.Size(875, 25);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -749,32 +759,63 @@
             this.tsmi_tools.Size = new System.Drawing.Size(48, 21);
             this.tsmi_tools.Text = "工 具";
             // 
-            // toolStripStatusLabel4
+            // groupBox3
             // 
-            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(116, 17);
-            this.toolStripStatusLabel4.Text = "剩余端口扫描次数：";
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.splitContainer1);
+            this.groupBox3.Location = new System.Drawing.Point(8, 25);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(857, 492);
+            this.groupBox3.TabIndex = 2;
+            this.groupBox3.TabStop = false;
             // 
-            // tssl_notScanPortsSumCount
+            // splitContainer1
             // 
-            this.tssl_notScanPortsSumCount.Name = "tssl_notScanPortsSumCount";
-            this.tssl_notScanPortsSumCount.Size = new System.Drawing.Size(15, 17);
-            this.tssl_notScanPortsSumCount.Text = "0";
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(3, 17);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.services_list);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.groupBox5);
+            this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
+            this.splitContainer1.Size = new System.Drawing.Size(851, 472);
+            this.splitContainer1.SplitterDistance = 96;
+            this.splitContainer1.TabIndex = 4;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox5.Controls.Add(this.list_lvw);
+            this.groupBox5.Location = new System.Drawing.Point(5, 131);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(743, 339);
+            this.groupBox5.TabIndex = 3;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "弱口令列表";
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(876, 677);
+            this.ClientSize = new System.Drawing.Size(875, 677);
             this.Controls.Add(this.rdp_panle);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.bt_status);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta20 by shack2";
+            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta25 by shack2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Shown += new System.EventHandler(this.Main_Shown);
             this.groupBox1.ResumeLayout(false);
@@ -785,6 +826,12 @@
             this.bt_status.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            this.groupBox5.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -803,7 +850,6 @@
         private System.Windows.Forms.TextBox txt_target;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btn_importList;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cbox_threadSize;
         private System.Windows.Forms.Label label4;
@@ -864,6 +910,9 @@
         private System.Windows.Forms.ColumnHeader col_useTime;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
         private System.Windows.Forms.ToolStripStatusLabel tssl_notScanPortsSumCount;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private System.Windows.Forms.GroupBox groupBox5;
     }
 }
 

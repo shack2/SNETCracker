@@ -12,6 +12,7 @@ namespace SNETCracker.Model
 
         }
        
+       /*
         public override Server creack(string ip, int port, string username, string password, int timeOut)
         {
             Rebex.Net.Ssh ssh = new Rebex.Net.Ssh();
@@ -46,17 +47,17 @@ namespace SNETCracker.Model
             }
             return server;
 
-        }
+        }*/
 
 
-        /*
+        
        public override Server creack(string ip, int port, string username, string password, int timeOut)
        {
            Chilkat.Ssh ssh = new Chilkat.Ssh();
            
            Server server = new Server();
            try{
-               bool success = ssh.UnlockComponent("blh6lp.SS10899_Oi30mPCYGbnd");
+               bool success = ssh.UnlockComponent("u3ygKY.SS10299_BZWRWO736dmG");
                if (success != true)
                {
                    throw new Exception("SSH组件解锁失败！");
@@ -90,7 +91,7 @@ namespace SNETCracker.Model
            }
            return server;
 
-       }*/
+       }
 
     }
 }

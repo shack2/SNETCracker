@@ -1,4 +1,5 @@
 ﻿using Amib.Threading;
+using Microsoft.Win32;
 using Mono.Security.Cryptography;
 using MyRDP;
 using SNETCracker.Model;
@@ -20,7 +21,6 @@ namespace SNETCracker
     public partial class Main : Form
     {
 
-
         private HashSet<string> list_username = new HashSet<string>();
         private HashSet<string> list_password = new HashSet<string>();
         private HashSet<string> list_target = new HashSet<string>();
@@ -32,9 +32,6 @@ namespace SNETCracker
         private int retryCount = 0;
         private int maxThread = 50;
         private int timeOut = 5;
-        private string dic_username_path = "";
-        private string dic_password_path = "";
-        private string dic_target_path = "";
 
         private Boolean crackerOneCount = true;//只检查一个账户
         public int successCount = 0;
@@ -89,7 +86,7 @@ namespace SNETCracker
         /// <param name="text">显示文本</param> 
         public void LogAppend(Color color, string text)
         {
-            if (this.txt_log.Text.Length > 100000) {
+            if (this.txt_log.Text.Length > 10000) {
                 this.txt_log.Clear();
             }
             this.txt_log.SelectionColor = color;
@@ -269,118 +266,123 @@ namespace SNETCracker
                         while (count <= this.retryCount)
                         {
                             count++;
-                        try
-                        { //跳过检查，多线程安全
-                            bool cconce = false;
-                            lock (list_success_username)
-                            {
-                                cconce = list_success_username.Contains(ip + serviceName + port);
+                            try
+                            { //跳过检查，多线程安全
+                                bool cconce = false;
+                                lock (list_success_username)
+                                {
+                                    cconce = list_success_username.Contains(ip + serviceName + port);
+                                }
+                                if (this.crackerOneCount && cconce)
+                                {
+                                    Interlocked.Increment(ref allCrackCount);
+                                    break;
+                                }
+                                Stopwatch sw = new Stopwatch();
+                                sw.Start();
+                                if (serviceName.Equals("RDP"))
+                                {
+                                    server=creackRDP(ip, port, username, password, timeOut);
+                                }
+                                else
+                                {
+                                    CrackService cs = null;
+                                    if (cs == null) {
+                                        Type type = Type.GetType("SNETCracker.Model.Crack" + serviceName);
+                                        if (type != null)
+                                        {
+                                            cs = (CrackService)Activator.CreateInstance(type);
+                                        
+                                        }
+                                    }
+                                    server = cs.creack(ip, port, username, password, timeOut);
+
+                                }
+                                sw.Stop();
+                                server.userTime = sw.ElapsedMilliseconds;
+
                             }
-                            if (this.crackerOneCount && cconce)
+                            catch (IPBreakException ie)
                             {
+                                string breakip = ie.Message;
+                                lock (list_ip_break)
+                                {
+                                    if (!list_ip_break.Contains(breakip))
+                                    {
+                                        list_ip_break.Add(breakip);
+                                    }
+                                }
+                            }
+                            catch (IPUserBreakException ie)
+                            {
+                                lock (list_ip_break)
+                                {
+                                    string breakipuser = ie.Message;
+                                    if (!list_ip_break.Contains(breakipuser))
+                                    {
+                                        list_ip_user_break.Add(breakipuser);
+                                    }
+                                }
+                            }
+                            catch (TimeoutException te) {
+                                continue;
+                            }
+                            catch (Exception e)
+                            {
+                                string logInfo = "检查" + ip + ":" + serviceName + "登录发生异常！" + e.Message;
+                                LogWarning(logInfo);
+                                FileTool.log(logInfo + e.StackTrace);
+                            }
                                 break;
                             }
-                            Stopwatch sw = new Stopwatch();
-                            sw.Start();
-                            if (serviceName.Equals("RDP"))
+                            if (server.isSuccess)
                             {
-                                server=creackRDP(ip, port, username, password, timeOut);
-                            }
-                            else
-                            {
-                                CrackService cs = null;
-                                Type type = Type.GetType("SNETCracker.Model.Crack" + serviceName);
-                                if (type != null)
+                                bool success = false;
+                                lock (list_success_username)
                                 {
-                                    cs = (CrackService)Activator.CreateInstance(type);
-                                }
-                                server = cs.creack(ip, port, username, password, timeOut);
-
-                            }
-                            sw.Stop();
-                            server.userTime = sw.ElapsedMilliseconds;
-
-                        }
-                        catch (IPBreakException ie)
-                        {
-                            string breakip = ie.Message;
-                            lock (list_ip_break)
-                            {
-                                if (!list_ip_break.Contains(breakip))
-                                {
-                                    list_ip_break.Add(breakip);
-                                }
-                            }
-                        }
-                        catch (IPUserBreakException ie)
-                        {
-                            lock (list_ip_break)
-                            {
-                                string breakipuser = ie.Message;
-                                if (!list_ip_break.Contains(breakipuser))
-                                {
-                                    list_ip_user_break.Add(breakipuser);
-                                }
-                            }
-                        }
-                        catch (TimeoutException te) {
-                            continue;
-                        }
-                        catch (Exception e)
-                        {
-                            string logInfo = "检查" + ip + ":" + serviceName + "登录发生异常！" + e.Message;
-                            LogWarning(logInfo);
-                            FileTool.log(logInfo + e.StackTrace);
-                        }
-                            break;
-                        }
-                        if (server.isSuccess)
-                        {
-                            bool success = false;
-                            lock (list_success_username)
-                            {
-                                success = list_success_username.Contains(ip + serviceName + port + username);
-                            }
-                            if (!success)
-                            {
-                                if (this.crackerOneCount)
-                                {
-                                    //多线程安全
-                                    lock (list_success_username)
-                                    {
-                                        success = list_success_username.Contains(ip + serviceName + port);
-                                    }
+                                    success = list_success_username.Contains(ip + serviceName + port + username);
                                 }
                                 if (!success)
                                 {
-                                    //多线程安全
-                                    lock (list_success_username)
+                                    if (this.crackerOneCount)
                                     {
-                                        list_success_username.Add(ip + serviceName + port);
-                                        list_success_username.Add(ip + serviceName + port + username);
+                                        //多线程安全
+                                        lock (list_success_username)
+                                        {
+                                            success = list_success_username.Contains(ip + serviceName + port);
+                                        }
                                     }
-                                    Interlocked.Increment(ref successCount);
-                                    addItemToListView(successCount, ip, serviceName, port, username, password, server.banner, server.userTime);
-                                    string sinfo = ip + "-----" + serviceName + "----" + username + "----" + password +"----"+ server.banner +"----成功！";
-                                    LogInfo(sinfo);
-                                    FileTool.AppendLogToFile(Directory.GetCurrentDirectory() + "/cracker_result.log", sinfo);
+                                    if (!success)
+                                    {
+                                        //多线程安全
+                                        lock (list_success_username)
+                                        {
+                                            list_success_username.Add(ip + serviceName + port);
+                                            list_success_username.Add(ip + serviceName + port + username);
+                                        }
+                                        Interlocked.Increment(ref successCount);
+                                        addItemToListView(successCount, ip, serviceName, port, username, password, server.banner, server.userTime);
+                                        String sinfo = ip + "-----" + serviceName + "----" + username + "----" + password +"----"+ server.banner +"----成功！";
+                                        LogInfo(sinfo);
+                                        FileTool.AppendLogToFile(Directory.GetCurrentDirectory() + "/cracker_result.log", sinfo);
                                     
-                            }
+                                }
+
+                                }
 
                             }
-
-                        }
-                        else
-                        {
-                            //LogWarning(ip + "-----" + serviceName + "----" + username + "----" + password + "失败！");
-                        }
+                            else
+                            {
+                                //LogWarning(ip + "-----" + serviceName + "----" + username + "----" + password + "失败！");
+                            }
                     
                 }
-                Interlocked.Increment(ref allCrackCount);
+                
             }
             catch (Exception e) {
                 LogError(e.Message+e.StackTrace);
             }
+            Interlocked.Increment(ref allCrackCount);
         }
 
         private void addItemToListView(int successCount,string ip,String serviceName,int port,String username,String password,String banner,long userTime) {
@@ -417,7 +419,7 @@ namespace SNETCracker
                 creackerSumCount = 0;
                 scanPortsSumCount = 0;
                
-
+                
                 //计算端口扫描总数
                 if (isScanport)
                 {
@@ -444,7 +446,7 @@ namespace SNETCracker
                             }
                             else {
                                 stp.QueueWorkItem<string, string, int>(ScanPort, ip, serviceName, port);
-                                stp.WaitFor(1000);
+                                stp.WaitFor(1);
                             }
                         }
                     }
@@ -511,7 +513,7 @@ namespace SNETCracker
                                 if (cracker.EndsWith(serviceName))
                                 {
                                     stp.QueueWorkItem<string, string, string>(crackerService, cracker, username, pass); 
-                                    stp.WaitFor(1000);
+                                    stp.WaitFor(1);
                                 }
                             }
                         }
@@ -532,8 +534,8 @@ namespace SNETCracker
         public void stopCraker() {
             if (stp != null&& !stp.IsShuttingdown&&this.crackerThread!=null) {
                 LogWarning("等待线程结束...");
-                this.crackerThread.Abort();
                 stp.Shutdown();
+                this.crackerThread.Abort();
                 while (stp.InUseThreads>0) {
                     Thread.Sleep(50);
                 }
@@ -548,7 +550,7 @@ namespace SNETCracker
         }
         private Boolean initDic() {
 
-            if ("".Equals(this.txt_target.Text) && "".Equals(this.dic_target_path))
+            if ("".Equals(this.txt_target.Text))
             {
                 MessageBox.Show("请设置需要检查的目标的IP地址或域名！");
                 return false;
@@ -644,25 +646,30 @@ namespace SNETCracker
             //加载自定义字典字典
             if (notAutoSelectDic)
             {
-                if (!"".Equals(this.dic_username_path))
+                if (this.txt_username.Text.EndsWith(".txt"))
                 {
-                    this.list_username = FileTool.readFileToList(this.dic_username_path);
+                    this.list_username = FileTool.readFileToList(this.txt_username.Text);
+                }
+                else {
+                    if (this.txt_username.Text.Length > 0)
+                    {
+                        this.list_username.Clear();
+                        this.list_username.Add(this.txt_username.Text);
+                    }
                 }
 
-                if (!"".Equals(this.dic_password_path))
+                if (this.txt_password.Text.EndsWith(".txt"))
                 {
-                    this.list_password = FileTool.readFileToList(this.dic_password_path);
+                    this.list_password = FileTool.readFileToList(this.txt_password.Text);
                 }
-                if (this.txt_username.Text.Length > 0)
-                {
-                    this.list_username.Clear();
-                    this.list_username.Add(this.txt_username.Text);
+                else {
+                    if (this.txt_password.Text.Length > 0)
+                    {
+                        this.list_password.Clear();
+                        this.list_password.Add(this.txt_password.Text);
+                    }
                 }
-                if (this.txt_password.Text.Length > 0)
-                {
-                    this.list_password.Clear();
-                    this.list_password.Add(this.txt_password.Text);
-                }
+               
                 if (this.list_username.Count <= 0)
                 {
                     MessageBox.Show("请设置需要检查的用户名！");
@@ -670,7 +677,7 @@ namespace SNETCracker
                 }
                 else if (this.list_password.Count <= 0)
                 {
-                    MessageBox.Show("请设置检查的密码字典！");
+                    MessageBox.Show("请设置检查的密码！");
                     return false;
                 }
             }
@@ -742,8 +749,8 @@ namespace SNETCracker
             }
             
         }
+      
         delegate Server addRDPdelegate(String ip, int port,String username, String password,int timeout);
-
         private Server addRDPClient(String ip,int port,String username,String password,int timeout) {
             Server server = new Server();
             RdpClient rdp = null;
@@ -756,6 +763,7 @@ namespace SNETCracker
                 server.username = username;
                 server.password = password;
                 rdp = new RdpClient(server);
+                rdp.Location = new Point(this.rdp_panle.Location.X+new Random().Next(50), this.rdp_panle.Location.Y+new Random().Next(100));
                 server.client = rdp;
                 this.rdp_panle.Controls.Add(rdp);
                 rdp.OnResponse += rdpResult;
@@ -776,12 +784,8 @@ namespace SNETCracker
         private void ClearRDP(RdpClient rdp){
             try
             {
-                if (rdp.IsDisposed == false)
-                {
-                    rdp.Dispose();
-                }
+                rdp.Dispose();
                 this.rdp_panle.Controls.Remove(rdp);
-                
             }
             catch (Exception e) {
                 FileTool.log("RDP资源清理异常-" + e.Message);
@@ -791,22 +795,29 @@ namespace SNETCracker
 
         private Server creackRDP(String ip, int port,String username, String password, int timeout)
         {
-            
-            Server server = (Server)this.rdp_panle.Invoke(new addRDPdelegate(addRDPClient), ip, port, username, password, timeout);
-            server.isEndMRE.WaitOne();
-            Server newserver = new Server();
-            newserver.isSuccess = server.isSuccess;
-            this.rdp_panle.Invoke(new deleteClearRDP(ClearRDP), server.client);
-            return newserver;
+            Server server = new Server();
+            try {
+                server = (Server)this.rdp_panle.Invoke(new addRDPdelegate(addRDPClient), ip, port, username, password, timeout);
+                server.isEndMRE.WaitOne();
+                this.rdp_panle.BeginInvoke(new deleteClearRDP(ClearRDP), server.client);
+            }catch(Exception e){
+                FileTool.log("creackRDP错误：" + e.Message);
+            }
+            return server;
         }
-      
+
+
+       
+
         private void btn_cracker_Click(object sender, EventArgs e)
         {
             this.btn_cracker.Enabled = false;
             this.list_success_username.Clear();
             this.services_list.Enabled = false;
+           
             crackerThread = new Thread(cracker);
-            crackerThread.Start(); 
+            crackerThread.Start();
+           
         }
 
         private void initStatusCount()
@@ -815,6 +826,7 @@ namespace SNETCracker
             allCrackCount = 0;
         }
 
+        /*使用转换过的dll后，此方法废弃
         private void regDLL() {
             Process p = null;
             try
@@ -835,11 +847,11 @@ namespace SNETCracker
                 }
             }
 
-        }
+        }*/
         private void Main_Shown(object sender, EventArgs e)
         {
             this.Text += " "+Main.version + "";
-            regDLL();
+           
             this.cbox_reTry.SelectedIndex = 0;
             this.cbox_threadSize.SelectedIndex = 10;
             this.cbox_timeOut.SelectedIndex = 2;
@@ -861,7 +873,7 @@ namespace SNETCracker
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 if (!string.IsNullOrEmpty(ofd.FileName)) {
-                    this.dic_username_path = ofd.FileName;
+                    this.txt_username.Text = ofd.FileName;
                     LogInfo("导入用户名成功！");
                 }
             }
@@ -875,7 +887,7 @@ namespace SNETCracker
                 
                 if (!string.IsNullOrEmpty(ofd.FileName))
                 {
-                    this.dic_password_path = ofd.FileName;
+                    this.txt_password.Text = ofd.FileName;
                     LogInfo("导入密码字典成功！");
                 }
             }
@@ -1041,19 +1053,27 @@ namespace SNETCracker
 
         public static String getSid()
         {
-            //获得系统唯一号，系统安装id和mac组合
-            
-            String sid = Environment.OSVersion + "_";
+
+            String sid = "";
             try
             {
+                //获得系统名称
+                RegistryKey rk = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion");
+                sid = rk.GetValue("ProductName").ToString();
+                rk.Close();
+                //获得系统唯一号，系统安装id和mac组合
+                sid += "_";
+
                 var officeSoftware = new ManagementObjectSearcher("SELECT ID, ApplicationId, PartialProductKey, LicenseIsAddon, Description, Name, OfflineInstallationId FROM SoftwareLicensingProduct where PartialProductKey <> null");
                 var result = officeSoftware.Get();
                 foreach (var item in result)
                 {
+                    String c = item.GetPropertyValue("name").ToString();
+
                     if (item.GetPropertyValue("name").ToString().StartsWith("Windows"))
                     {
 
-                        sid += item.GetPropertyValue("OfflineInstallationId").ToString() + "__";
+                        sid += item.GetPropertyValue("OfflineInstallationId").ToString() + "_";
                         break;
                     }
                 }
@@ -1061,7 +1081,7 @@ namespace SNETCracker
             }
             catch (Exception e)
             {
-                sid += "ex__";
+                sid += "ex_";
             }
             try
             {
@@ -1079,12 +1099,12 @@ namespace SNETCracker
             }
             catch
             {
-                sid += "ex__" + System.Guid.NewGuid();
+                sid += "ex_" + System.Guid.NewGuid();
             }
             return sid;
         }
-        
-        private static int version = 20181125;
+
+        private static int version = 20190324;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {
@@ -1167,5 +1187,7 @@ namespace SNETCracker
             MessageBox.Show("ok");
            
         }
+
+     
     }
 }
