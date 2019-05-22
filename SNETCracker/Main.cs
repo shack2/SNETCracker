@@ -919,7 +919,7 @@ namespace SNETCracker
 
         private void Main_FormClosing(object sender, FormClosingEventArgs e)
         {
-            System.Environment.Exit(0);
+            Application.Exit();
         }
 
         private void chk_notAutoSelectDic_CheckedChanged(object sender, EventArgs e)
@@ -1104,7 +1104,7 @@ namespace SNETCracker
             return sid;
         }
 
-        private static int version = 20190324;
+        private static int version = 20190522;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {
