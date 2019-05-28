@@ -26,7 +26,7 @@ namespace SNETCracker.Model
                 {
                     password = "";
                 }
-                conn.ConnectionString = "server=" + ip + ";user id=" + username + ";password=" + password + ";pooling=false;ConnectionTimeout=" + timeOut;
+                conn.ConnectionString = "server=" + ip + ";port="+ port + ";user id=" + username + ";password=" + password + ";pooling=true;ConnectionTimeout=" + timeOut;
 
                 conn.Open();
                 

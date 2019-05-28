@@ -23,6 +23,7 @@ namespace SNETCracker.Model
             try
             {
                 ftp.Host = ip;
+                ftp.Port = port;
                 ftp.Credentials = new NetworkCredential(username, password);
                 ftp.ConnectTimeout = timeOut*1000;
                 ftp.ReadTimeout = timeOut*1000;

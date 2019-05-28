@@ -16,7 +16,7 @@ namespace SNETCracker.Model
                 OracleConnection conn = null;
             Server server = new Server();
                 try {
-                    String connectionStr = "Data Source=" + ip + "/"+ orclName + ";User ID=" + username + ";PassWord=" + password + ";Connect Timeout=" + timeOut;
+                    String connectionStr = "Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST="+ip+")(PORT="+port+"))(CONNECT_DATA=(SERVICE_NAME="+ orclName + ")));User ID=" + username + ";PassWord=" + password + ";Connect Timeout=" + timeOut;
                    
                     conn = new OracleConnection(connectionStr);
                     
