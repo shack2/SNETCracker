@@ -39,11 +39,16 @@ namespace SNETCracker.Model
             }
             catch (Exception e)
             {
-                throw e;
+                if (e.Message.IndexOf("Failed to connect")!= -1)
+                {
+                    throw new TimeoutException(e.Message);
+                }
+                else {
+                    throw e;
+                }
+                
             }
-            return server;
-
-
+             return server;
         }
 
     }

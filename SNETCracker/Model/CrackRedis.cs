@@ -32,6 +32,7 @@ namespace SNETCracker.Model
             finally {
                 if (redis != null) {
                     redis.Close();
+                    
                 }
             }
             return server;

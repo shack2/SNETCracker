@@ -9,18 +9,15 @@ namespace MyRDP
 {
     public class RdpClient : AxMsRdpClient7NotSafeForScripting
     {
-        private Server server = null;
+        public Server server = null;
         public String name = "";
-        public delegate void OnResponseDelegate(ResponseType type, Server server);
+        public delegate void OnResponseDelegate(ResponseType type,RdpClient rdp, ref Server server);
         public event OnResponseDelegate OnResponse;
         public System.Timers.Timer timeOutLog = new System.Timers.Timer();
         public ResponseType response = ResponseType.Connecting;
-        public RdpClient(Server cserver)
+        public RdpClient()
         {
-            
-            this.server = cserver;
-            this.timeOutLog.Interval = server.timeout * 1000;
-            this.timeOutLog.Elapsed += TimeOut;
+           
             this.OnConnected += Rdp_OnConnected;
             this.OnLoginComplete += Rdp_OnLoginComplete;
             this.OnFatalError += Rdp_OnFatalError;
@@ -28,27 +25,14 @@ namespace MyRDP
             this.OnDisconnected += Rdp_OnDisconnected;
             this.OnAuthenticationWarningDisplayed += Rdp_OnAuthenticationWarningDisplayed;
             this.OnAuthenticationWarningDismissed += Rdp_OnAuthenticationWarningDismissed;
-            
             this.OnWarning += Rdp_OnWaring;
         }
-
 
         public object Password { get; internal set; }
 
         private void Finished()
         {
-            try
-            {
-                if (this.Connected != 0)
-                {
-                    this.Disconnect();
-                }   
-            }
-            catch (Exception ce)
-            {
-                FileTool.log("Finished:" + ce.Message);
-            }
-            OnResponse(ResponseType.Finished, server);
+            OnResponse(ResponseType.Finished,this,ref server);
             
         }
         private void TimeOut(object sender, ElapsedEventArgs e)
@@ -56,28 +40,27 @@ namespace MyRDP
             this.timeOutLog.Stop();
             Finished();
         }
-
-
-        
-
-        public delegate void deConnect(string ip, int port, string user, string pass);
-        public void Connect(string ip, int port, string user, string pass)
+        public void ConnectServer(Server server)
         {
             try
             {
+
+                this.server = server;
+                this.timeOutLog.Interval = server.timeout * 1000;
+                this.timeOutLog.Elapsed += TimeOut;
                 this.Height = 1;
                 this.Width = 1;
                 this.timeOutLog.Start();
-                this.Server = ip;
+                this.Server = server.ip;
                 this.ColorDepth = 1;
+
                 this.AdvancedSettings.Compress = 1;
-                this.Password = pass;
-                this.UserName = user;
-                this.AdvancedSettings7.RDPPort = port;
-                this.AdvancedSettings7.ClearTextPassword = pass;
+                this.Password = server.password;
+                this.UserName = server.username;
+                this.AdvancedSettings7.RDPPort = server.port;
+                this.AdvancedSettings7.ClearTextPassword = server.password;
                 this.AdvancedSettings7.EnableCredSspSupport = true;
                 this.AdvancedSettings7.ConnectToAdministerServer = true;
-
                 this.AdvancedSettings7.EnableMouse = 0;
                 this.AdvancedSettings7.EnableWindowsKey = 0;
                 this.AdvancedSettings7.EncryptionEnabled = 0;
@@ -90,15 +73,18 @@ namespace MyRDP
                 this.AdvancedSettings7.PinConnectionBar = false;
                 this.AdvancedSettings7.RedirectPorts = false;
                 this.AdvancedSettings7.RedirectPrinters = false;
-                this.AdvancedSettings7.RedirectSmartCards = false;
+                this.AdvancedSettings7.RedirectSmartCards = true;
                 IMsRdpClientNonScriptable5 sc = (IMsRdpClientNonScriptable5)this.GetOcx();
                 sc.AllowPromptingForCredentials = false;
                 sc.WarnAboutSendingCredentials = false;
                 sc.WarnAboutClipboardRedirection = false;
                 sc.ShowRedirectionWarningDialog = false;
-                
+                sc.PromptForCredentials = false;
+                sc.PromptForCredsOnClient = false;
+                sc.WarnAboutPrinterRedirection = false;
+                sc.WarnAboutDirectXRedirection = false;
                 this.Connect();
-                
+
             }
             catch (Exception e)
             {
@@ -119,8 +105,9 @@ namespace MyRDP
 
         private void Rdp_OnLoginComplete(object sender, EventArgs e)
         {
+          
             this.server.isSuccess = true;
-            this.server.banner = this.Version;
+            this.server.banner =this.Domain;
             
             Finished();
         }
@@ -128,8 +115,10 @@ namespace MyRDP
         private void Rdp_OnLoginError(object sender, IMsTscAxEvents_OnLogonErrorEvent e)
         {
             this.server.isSuccess = false;
-            
-            Finished();
+            FileTool.log("lError:"+e.lError);
+            if (e.lError != -2) {
+                Finished();
+            }
             
         }
 
@@ -145,13 +134,13 @@ namespace MyRDP
 
         private void Rdp_OnAuthenticationWarningDismissed(object sender, EventArgs e)
         {
-         
+            Finished();
         }
 
         private void Rdp_OnAuthenticationWarningDisplayed(object sender, EventArgs e)
         {
-            
-           
+
+            Finished();
         }
     }
 }

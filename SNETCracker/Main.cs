@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Management;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -131,13 +132,13 @@ namespace SNETCracker
         }
 
        
-        private int lastCount = 0;
+        private long lastCount = 0;
         private void updateStatus() {
             try
             {
                 if (stp != null)
                 {
-                    int workCount = stp.WorkItemsProcessedCount;
+                    long workCount = allCrackCount;
 
                     this.stxt_speed.Text = (workCount - this.lastCount)+"";
                     this.lastCount = workCount;
@@ -147,7 +148,7 @@ namespace SNETCracker
                     if (this.creackerSumCount != 0)
                     {
                         c = (int)Math.Floor((workCount * 100 / (double)this.creackerSumCount));
-                        this.stxt_threadPoolStatus.Text = workCount + "/" + this.creackerSumCount;
+                        this.stxt_threadPoolStatus.Text = allCrackCount+ "/" + this.creackerSumCount;
                     }
                     if(c <= 0){
                         c = 0;
@@ -189,13 +190,13 @@ namespace SNETCracker
             //直接使用TcpClient类
             TcpClient tc = new TcpClient();
             //设置超时时间
-            tc.SendTimeout = tc.ReceiveTimeout = 5000;
+            tc.SendTimeout = tc.ReceiveTimeout = 2000;
 
             try
             {
                 //异步方法
                 IAsyncResult oAsyncResult = tc.BeginConnect(ip, port, null, null);
-                oAsyncResult.AsyncWaitHandle.WaitOne(1000*timeOut, true);
+                oAsyncResult.AsyncWaitHandle.WaitOne(2000, true);
 
                 if (tc.Connected)
                 {
@@ -204,6 +205,7 @@ namespace SNETCracker
                         list_cracker.Add(ip + ":" + port + ":" + serviceName);
                     }
                     LogMessage(ip + " port " + port + " 开放！");
+                    FileTool.AppendLogToFile(Directory.GetCurrentDirectory() + "/port_scan.log", ip + ":" + port + ":" + serviceName);
                 }
                 else {
                     
@@ -280,9 +282,16 @@ namespace SNETCracker
                                 }
                                 Stopwatch sw = new Stopwatch();
                                 sw.Start();
+                               
                                 if (serviceName.Equals("RDP"))
                                 {
-                                    server=creackRDP(ip, port, username, password, timeOut);
+                                    server.ip = ip;
+                                    server.timeout = timeOut;
+                                    server.serverName = "RDP";
+                                    server.port = port;
+                                    server.username = username;
+                                    server.password = password;
+                                    server =creackRDP(server);
                                 }
                                 else
                                 {
@@ -472,7 +481,7 @@ namespace SNETCracker
                 {
                     creackerSumCount += list_cracker.Count * this.list_username.Count*this.list_password.Count* this.services_list.CheckedItems.Count;
                 }
-
+              
                 foreach (string serviceName in this.services_list.CheckedItems)
                 {
                     HashSet<string> clist_username = null;
@@ -492,6 +501,13 @@ namespace SNETCracker
                         //替换变量密码
                         string username = user + this.txt_username_ext.Text;
                         HashSet<string> list_current_password = new HashSet<string>();
+
+                        //redis不需要破解账户
+                        if (serviceName.Equals("Redis"))
+                        {
+                            username = "/";
+                        }
+
                         foreach (string cpass in clist_password)
                         {
                             string newpass = cpass.Replace("%user%", user);
@@ -516,6 +532,10 @@ namespace SNETCracker
                                     stp.WaitFor(1);
                                 }
                             }
+                        }
+                        //redis不需要破解账户
+                        if (serviceName.Equals("Redis")) {
+                            break;
                         }
                     }
                 }
@@ -740,39 +760,47 @@ namespace SNETCracker
             Rebex.Licensing.Key = a;
         }
         Thread crackerThread = null;
-        public void rdpResult(ResponseType type, Server rdp) {
+        public void rdpResult(ResponseType type,RdpClient rdp,ref Server server) {
             //LogInfo(type.ToString());
+           /* try
+            {
+                if (rdp.Connected != 0)
+                {
+                    rdp.Disconnect();
+                }
+                if (rdp.IsDisposed == false) {
+                    rdp.Dispose();
+                    this.rdp_panle.Controls.Remove(rdp);
+                }
+            }
+            catch (Exception ce)
+            {
+                FileTool.log("RDP Check Finished:" + ce.Message);
+            */
             //接受事件通知，表示完成后，将当前阻塞线程放过继续执行。
             if (ResponseType.Finished.Equals(type)) {
-                rdp.isDisConnected = true;
-                rdp.isEndMRE.Set();
+                server.isDisConnected = true;
+                server.isEndMRE.Set();
             }
             
         }
-      
-        delegate Server addRDPdelegate(String ip, int port,String username, String password,int timeout);
-        private Server addRDPClient(String ip,int port,String username,String password,int timeout) {
-            Server server = new Server();
-            RdpClient rdp = null;
+
+       delegate Server addRDPdelegate(Server server);
+        private Server addRDPClient(Server server) {
+          
             try
             {
-                server.ip = ip;
-                server.timeout = timeout;
-                server.serverName = "RDP";
-                server.port = port;
-                server.username = username;
-                server.password = password;
-                rdp = new RdpClient(server);
-                rdp.Location = new Point(this.rdp_panle.Location.X+new Random().Next(50), this.rdp_panle.Location.Y+new Random().Next(100));
+                RdpClient rdp = new RdpClient();
                 server.client = rdp;
+                server.client.server = server;
                 this.rdp_panle.Controls.Add(rdp);
-                rdp.OnResponse += rdpResult;
-                rdp.Connect(ip, port, username, password);
+                server.client.OnResponse += rdpResult;
+                server.client.ConnectServer(server);
             }
             catch (Exception e)
             {
-                FileTool.log(ip + ":" + port + "-RDP操作异常-" + e.Message);
-                LogWarning(ip + ":" + port + "-RDP操作异常-" + e.Message);
+                FileTool.log(server.ip + ":" + server.port + "-RDP操作异常-" + e.Message);
+                LogWarning(server.ip + ":" + server.port + "-RDP操作异常-" + e.Message);
                 server.isDisConnected = true;
                 server.isEndMRE.Set();
             }
@@ -780,10 +808,14 @@ namespace SNETCracker
 
         }
 
-        private delegate void deleteClearRDP(RdpClient rdp);
-        private void ClearRDP(RdpClient rdp){
+        private delegate void deleteClearRDP(Server server);
+        private void ClearRDP(Server server){
             try
             {
+                RdpClient rdp = server.client;
+                if (rdp.Connected != 0) {
+                    rdp.Disconnect();       
+                }
                 rdp.Dispose();
                 this.rdp_panle.Controls.Remove(rdp);
             }
@@ -793,14 +825,16 @@ namespace SNETCracker
             }
         }
 
-        private Server creackRDP(String ip, int port,String username, String password, int timeout)
+        private Server creackRDP(Server server)
         {
-            Server server = new Server();
             try {
-                server = (Server)this.rdp_panle.Invoke(new addRDPdelegate(addRDPClient), ip, port, username, password, timeout);
+               
+                server = (Server)this.rdp_panle.Invoke(new addRDPdelegate(addRDPClient),server);
                 server.isEndMRE.WaitOne();
-                this.rdp_panle.BeginInvoke(new deleteClearRDP(ClearRDP), server.client);
-            }catch(Exception e){
+                this.rdp_panle.Invoke(new deleteClearRDP(ClearRDP), server);
+
+            }
+            catch(Exception e){
                 FileTool.log("creackRDP错误：" + e.Message);
             }
             return server;
@@ -826,28 +860,7 @@ namespace SNETCracker
             allCrackCount = 0;
         }
 
-        /*使用转换过的dll后，此方法废弃
-        private void regDLL() {
-            Process p = null;
-            try
-            {
-                p = new Process();
-                p.StartInfo.FileName = "Regsvr32.exe";
-                p.StartInfo.Arguments = "/s \"" + AppDomain.CurrentDomain.BaseDirectory + "/mstscax.dll\"";
-                p.Start();
-            }
-            catch (Exception e)
-            {
-                LogInfo("注册mstscax.dll发生错误！"+e.Message);
-            }
-            finally {
-                if (p != null)
-                {
-                    p.Close();
-                }
-            }
-
-        }*/
+        
         private void Main_Shown(object sender, EventArgs e)
         {
             this.Text += " "+Main.version + "";
@@ -1104,7 +1117,7 @@ namespace SNETCracker
             return sid;
         }
 
-        private static int version = 20190522;
+        private static int version = 20190713;
         public static string versionURL = "http://www.shack2.org/soft/getNewVersion?ENNAME=SNETCracker&NO="+ Uri.EscapeDataString(getSid())+ "&VERSION="+ version;
         private void tsmi_help_version_Click(object sender, EventArgs e)
         {
