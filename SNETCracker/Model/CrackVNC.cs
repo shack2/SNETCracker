@@ -3,14 +3,15 @@ using VncSharp;
 
 namespace SNETCracker.Model
 {
-    class CrackVNC: CrackService
+    class CrackVNC : CrackService
     {
         public CrackVNC()
         {
 
         }
-        public override Server creack(String ip, int port,String username,String password,int timeOut) {
-            
+        public override Server creack(String ip, int port, String username, String password, int timeOut)
+        {
+
             VncClient vc = null;
             Server server = new Server();
             try
@@ -27,8 +28,10 @@ namespace SNETCracker.Model
             {
                 throw e;
             }
-            finally {
-                if (vc != null) {
+            finally
+            {
+                if (vc != null)
+                {
                     vc.Disconnect();
                 }
             }

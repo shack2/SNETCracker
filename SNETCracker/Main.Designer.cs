@@ -400,7 +400,7 @@
             // rdp_panle
             // 
             this.rdp_panle.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.rdp_panle.Location = new System.Drawing.Point(13, 131);
+            this.rdp_panle.Location = new System.Drawing.Point(8, 131);
             this.rdp_panle.Name = "rdp_panle";
             this.rdp_panle.Size = new System.Drawing.Size(1, 1);
             this.rdp_panle.TabIndex = 12;
@@ -468,37 +468,37 @@
             // 
             this.col_ip.Text = "IP地址";
             this.col_ip.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.col_ip.Width = 100;
+            this.col_ip.Width = 116;
             // 
             // col_serviceName
             // 
             this.col_serviceName.Text = "服 务";
             this.col_serviceName.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.col_serviceName.Width = 100;
+            this.col_serviceName.Width = 87;
             // 
             // col_port
             // 
             this.col_port.Text = "端口";
             this.col_port.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.col_port.Width = 80;
+            this.col_port.Width = 63;
             // 
             // col_username
             // 
             this.col_username.Text = "帐户名";
             this.col_username.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.col_username.Width = 100;
+            this.col_username.Width = 103;
             // 
             // col_pass
             // 
             this.col_pass.Text = "密码";
             this.col_pass.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.col_pass.Width = 120;
+            this.col_pass.Width = 105;
             // 
             // col_banner
             // 
             this.col_banner.Text = "BANNER";
             this.col_banner.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.col_banner.Width = 100;
+            this.col_banner.Width = 110;
             // 
             // col_useTime
             // 
@@ -596,8 +596,8 @@
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(48, 17);
-            this.toolStripStatusLabel2.Text = "用 时：";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(44, 17);
+            this.toolStripStatusLabel2.Text = "用时：";
             // 
             // stxt_useTime
             // 
@@ -608,8 +608,8 @@
             // s_txt_threadlable
             // 
             this.s_txt_threadlable.Name = "s_txt_threadlable";
-            this.s_txt_threadlable.Size = new System.Drawing.Size(48, 17);
-            this.s_txt_threadlable.Text = "线 程：";
+            this.s_txt_threadlable.Size = new System.Drawing.Size(44, 17);
+            this.s_txt_threadlable.Text = "线程：";
             // 
             // stxt_threadStatus
             // 
@@ -632,8 +632,8 @@
             // toolStripStatusLabel3
             // 
             this.toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            this.toolStripStatusLabel3.Size = new System.Drawing.Size(68, 17);
-            this.toolStripStatusLabel3.Text = "破解成功：";
+            this.toolStripStatusLabel3.Size = new System.Drawing.Size(44, 17);
+            this.toolStripStatusLabel3.Text = "成功：";
             // 
             // stxt_crackerSuccessCount
             // 
@@ -644,8 +644,8 @@
             // toolStripStatusLabel5
             // 
             this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            this.toolStripStatusLabel5.Size = new System.Drawing.Size(48, 17);
-            this.toolStripStatusLabel5.Text = "速 度：";
+            this.toolStripStatusLabel5.Size = new System.Drawing.Size(44, 17);
+            this.toolStripStatusLabel5.Text = "速度：";
             // 
             // stxt_speed
             // 
@@ -656,8 +656,8 @@
             // toolStripStatusLabel4
             // 
             this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(116, 17);
-            this.toolStripStatusLabel4.Text = "剩余端口扫描次数：";
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(104, 17);
+            this.toolStripStatusLabel4.Text = "剩余端口扫描数：";
             // 
             // tssl_notScanPortsSumCount
             // 
@@ -781,6 +781,7 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(3, 17);
             this.splitContainer1.Name = "splitContainer1";
             // 
@@ -822,7 +823,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta27 by shack2";
+            this.Text = "超级弱口令检查工具 V1.0 测试版 Beta28 by shack2";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
             this.Shown += new System.EventHandler(this.Main_Shown);
             this.groupBox1.ResumeLayout(false);

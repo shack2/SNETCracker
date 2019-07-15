@@ -8,13 +8,15 @@ namespace SNETCracker.Model
 {
     class CrackTelnet : CrackService
     {
-        public CrackTelnet() {
+        public CrackTelnet()
+        {
 
         }
 
-        public override Server creack(String ip, int port,String username,String password,int timeOut) {
+        public override Server creack(String ip, int port, String username, String password, int timeOut)
+        {
             TelnetClient tc = null;
-            
+
             Server server = new Server();
             try
             {
@@ -27,11 +29,11 @@ namespace SNETCracker.Model
                 {
                     return server;
                 }
-                
+
                 if (tc.IsConnected)
                 {
                     server.isSuccess = true; ;
-                    
+
                 }
 
             }
@@ -41,7 +43,8 @@ namespace SNETCracker.Model
             }
             finally
             {
-                if (tc != null) {
+                if (tc != null)
+                {
                     tc.Dispose();
                 }
             }

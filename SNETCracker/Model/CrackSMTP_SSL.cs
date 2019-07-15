@@ -6,15 +6,16 @@ using Tools;
 
 namespace SNETCracker.Model
 {
-    class CrackSMTP_SSL: CrackService
+    class CrackSMTP_SSL : CrackService
     {
         public CrackSMTP_SSL()
         {
 
         }
-        public override Server creack(String ip, int port,String username,String password,int timeOut) {
+        public override Server creack(String ip, int port, String username, String password, int timeOut)
+        {
 
-                SMTP_Client conn = null;
+            SMTP_Client conn = null;
             Server server = new Server();
             try
             {
@@ -39,7 +40,7 @@ namespace SNETCracker.Model
             }
             finally
             {
-                if (conn != null&& conn.IsConnected)
+                if (conn != null && conn.IsConnected)
                 {
                     conn.Disconnect();
                 }

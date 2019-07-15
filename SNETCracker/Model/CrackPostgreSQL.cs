@@ -11,33 +11,41 @@ namespace SNETCracker.Model
         {
 
         }
-        public override Server creack(String ip, int port,String username,String password,int timeOut) {
+        public override Server creack(String ip, int port, String username, String password, int timeOut)
+        {
 
-                NpgsqlConnection conn = null;
+            NpgsqlConnection conn = null;
             Server server = new Server();
-                try
+            try
+            {
+                NpgsqlConnectionStringBuilder sb = new NpgsqlConnectionStringBuilder();
+
+                conn = new NpgsqlConnection("Server=" + ip + ";Port=" + port + ";User Id=" + username + ";Password=" + password + ";Database=postgres;Timeout=" + timeOut + ";ConnectionLifeTime = " + timeOut);
+                conn.Open();
+                server.isSuccess = ConnectionState.Open.Equals(conn.State);
+                if (server.isSuccess)
                 {
-                    NpgsqlConnectionStringBuilder sb = new NpgsqlConnectionStringBuilder();
-                   
-                    conn = new NpgsqlConnection("Server="+ip+";Port="+port+";User Id="+username+";Password="+password+ ";Database=postgres;Timeout=" + timeOut+";ConnectionLifeTime = " + timeOut);
-                    conn.Open();
-                    server.isSuccess= ConnectionState.Open.Equals(conn.State);
-                    if (server.isSuccess)
-                    {
-                        server.banner = conn.ServerVersion;
-                    }
+                    server.banner = conn.ServerVersion;
+                }
             }
             catch (Exception e)
+            {
+                if (e.Message.IndexOf("28000") != -1)
+                {
+                    throw new IPBreakException(ip + port);
+                }
+                else
                 {
                     throw e;
                 }
-                finally
+            }
+            finally
+            {
+                if (conn != null)
                 {
-                    if (conn != null)
-                    {
-                        conn.Close();
-                    }
+                    conn.Close();
                 }
+            }
             return server;
         }
     }

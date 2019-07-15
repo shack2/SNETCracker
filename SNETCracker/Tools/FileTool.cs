@@ -94,8 +94,7 @@ namespace Tools
         }
         public static void log(String log)
         {
-            AppendLogToFile(AppDomain.CurrentDomain.BaseDirectory + "/log.txt", log);
-
+            AppendLogToFile(AppDomain.CurrentDomain.BaseDirectory + "/logs/runlog-"+ DateTime.Now.ToString("yyyy-MM-dd") + ".log", log);
         }
         public static String getDomainByString(String weburl)
         {

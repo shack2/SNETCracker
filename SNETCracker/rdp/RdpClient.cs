@@ -13,7 +13,7 @@ namespace MyRDP
         public String name = "";
         public delegate void OnResponseDelegate(ResponseType type,RdpClient rdp, ref Server server);
         public event OnResponseDelegate OnResponse;
-        public System.Timers.Timer timeOutLog = new System.Timers.Timer();
+
         public ResponseType response = ResponseType.Connecting;
         public RdpClient()
         {
@@ -37,7 +37,6 @@ namespace MyRDP
         }
         private void TimeOut(object sender, ElapsedEventArgs e)
         {
-            this.timeOutLog.Stop();
             Finished();
         }
         public void ConnectServer(Server server)
@@ -46,16 +45,12 @@ namespace MyRDP
             {
 
                 this.server = server;
-                this.timeOutLog.Interval = server.timeout * 1000;
-                this.timeOutLog.Elapsed += TimeOut;
                 this.Height = 1;
                 this.Width = 1;
-                this.timeOutLog.Start();
                 this.Server = server.ip;
-                this.ColorDepth = 1;
+                this.ColorDepth = 8;
 
                 this.AdvancedSettings.Compress = 1;
-                this.Password = server.password;
                 this.UserName = server.username;
                 this.AdvancedSettings7.RDPPort = server.port;
                 this.AdvancedSettings7.ClearTextPassword = server.password;
@@ -74,8 +69,10 @@ namespace MyRDP
                 this.AdvancedSettings7.RedirectPorts = false;
                 this.AdvancedSettings7.RedirectPrinters = false;
                 this.AdvancedSettings7.RedirectSmartCards = true;
+                
                 IMsRdpClientNonScriptable5 sc = (IMsRdpClientNonScriptable5)this.GetOcx();
                 sc.AllowPromptingForCredentials = false;
+                sc.AllowCredentialSaving = false;
                 sc.WarnAboutSendingCredentials = false;
                 sc.WarnAboutClipboardRedirection = false;
                 sc.ShowRedirectionWarningDialog = false;
@@ -88,10 +85,10 @@ namespace MyRDP
             }
             catch (Exception e)
             {
-                timeOutLog.Stop();
                 throw e;
             }
         }
+
         private void Rdp_OnDisconnected(object sender, IMsTscAxEvents_OnDisconnectedEvent e)
         {
             Finished();
@@ -115,7 +112,6 @@ namespace MyRDP
         private void Rdp_OnLoginError(object sender, IMsTscAxEvents_OnLogonErrorEvent e)
         {
             this.server.isSuccess = false;
-            FileTool.log("lError:"+e.lError);
             if (e.lError != -2) {
                 Finished();
             }
