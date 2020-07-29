@@ -11,37 +11,39 @@ namespace SNETCracker.Model
         {
 
         }
-        public override Server creack(String ip, int port,String username,String password,int timeOut) {
+        public override Server creack(String ip, int port, String username, String password, int timeOut)
+        {
             POP3_Client conn = null;
             Server server = new Server();
-                try
+            try
+            {
+                conn = new POP3_Client();
+                //与Pop3服务器建立连接
+                conn.Timeout = timeOut;
+                conn.Connect(ip, port, true);
+                if (conn.IsConnected)
                 {
-                    conn = new POP3_Client();
-                    //与Pop3服务器建立连接
-                    conn.Timeout = timeOut;
-                    conn.Connect(ip, port, true);
-                    if (conn.IsConnected)
-                    {
-                    
-                        conn.Login(username, password);
 
-                        if (conn.IsAuthenticated)
-                        {
-                            server.isSuccess = conn.IsAuthenticated;
-                            server.banner = conn.GreetingText;
-                        }
-                    }
-                }
-                catch (Exception e) {
-                    throw e;
-                }
-                finally
-                {
-                    if (conn != null&& conn.IsConnected)
+                    conn.Login(username, password);
+
+                    if (conn.IsAuthenticated)
                     {
-                        conn.Disconnect();
+                        server.isSuccess = conn.IsAuthenticated;
+                        server.banner = conn.GreetingText;
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            finally
+            {
+                if (conn != null && conn.IsConnected)
+                {
+                    conn.Disconnect();
+                }
+            }
             return server;
         }
     }

@@ -13,7 +13,7 @@ namespace SNETCracker.Model
         {
 
         }
-       
+
         public override Server creack(String ip, int port, String username, String password, int timeOut)
         {
             MySqlConnection conn = new MySqlConnection();
@@ -26,10 +26,10 @@ namespace SNETCracker.Model
                 {
                     password = "";
                 }
-                conn.ConnectionString = "server=" + ip + ";port="+ port + ";user id=" + username + ";password=" + password + ";pooling=true;ConnectionTimeout=" + timeOut;
+                conn.ConnectionString = "server=" + ip + ";port=" + port + ";user id=" + username + ";password=" + password + ";pooling=true;ConnectionTimeout=" + timeOut;
 
                 conn.Open();
-                
+
                 server.isSuccess = ConnectionState.Open.Equals(conn.State);
                 if (server.isSuccess)
                 {
@@ -46,7 +46,7 @@ namespace SNETCracker.Model
                 {
                     throw new IPUserBreakException(ip + port + username);
                 }
-                else if (e.Message.IndexOf("没有正确答复") != -1||e.Message.IndexOf("Timeout in IO operation")!=-1||e.Message.IndexOf("Reading from")!=-1||e.Message.IndexOf("无法从传输连接中读取数据") != -1 || e.Message.IndexOf("Unable to") != -1)
+                else if (e.Message.IndexOf("没有正确答复") != -1 || e.Message.IndexOf("Timeout in IO operation") != -1 || e.Message.IndexOf("Reading from") != -1 || e.Message.IndexOf("无法从传输连接中读取数据") != -1 || e.Message.IndexOf("Unable to") != -1)
                 {
                     new TimeoutException(e.Message);
                 }

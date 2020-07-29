@@ -12,8 +12,9 @@ namespace SNETCracker.Model
         {
 
         }
-        public override Server creack(String ip, int port,String username,String password,int timeOut) {
-                IMAP_Client conn = null;
+        public override Server creack(String ip, int port, String username, String password, int timeOut)
+        {
+            IMAP_Client conn = null;
             Server server = new Server();
             try
             {
@@ -31,17 +32,18 @@ namespace SNETCracker.Model
                         server.banner = conn.GreetingText;
                     }
                 }
-                }
-                catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 throw e;
-                }
-                finally
+            }
+            finally
+            {
+                if (conn != null)
                 {
-                    if (conn != null)
-                    {
-                        conn.Disconnect();
-                    }
+                    conn.Disconnect();
                 }
+            }
             return server;
         }
     }

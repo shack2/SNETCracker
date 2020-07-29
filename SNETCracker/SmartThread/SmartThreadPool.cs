@@ -606,7 +606,7 @@ namespace Amib.Threading
         public void WaitFor(int maxWaitingCallbacks) {
             while (WaitingCallbacks > maxWaitingCallbacks)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(20);
             }
         }
 

@@ -8,15 +8,15 @@ using Tools;
 
 namespace SNETCracker.Model
 {
-    class CrackSMB: CrackService
+    class CrackSMB : CrackService
     {
         public CrackSMB()
         {
-            
+
         }
-       
-       public override Server creack(string ip, int port, string username, string password, int timeOut)
-       {
+
+        public override Server creack(string ip, int port, string username, string password, int timeOut)
+        {
             Server server = new Server();
             try
             {
@@ -31,7 +31,8 @@ namespace SNETCracker.Model
                 SmbConstants.DefaultSoTimeout = timeOut * 1000;
                 SmbSession.Logon(ud, port, auth);//验证是否能够成功登录
                 server.isSuccess = true;
-             
+
+
             }
             catch (SmbAuthException fe)
             {
@@ -39,11 +40,17 @@ namespace SNETCracker.Model
             }
             catch (Exception e)
             {
-                throw e;
+                if (e.Message.IndexOf("Failed to connect") != -1)
+                {
+                    throw new TimeoutException(e.Message);
+                }
+                else
+                {
+                    throw e;
+                }
+
             }
             return server;
-
-
         }
 
     }

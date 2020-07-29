@@ -10,6 +10,7 @@ namespace SNETCracker.Model
 {
     public class Server
     {
+        public long id = 0;
         public bool isSuccess = false;
         public string banner = "";
         public string ip = "";

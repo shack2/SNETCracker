@@ -26,13 +26,13 @@ namespace SNETCracker.Model
                 if (conn.IsConnected)
                 {
                     conn.Login(username, password);
-               
+
                     if (conn.IsAuthenticated)
                     {
                         server.isSuccess = conn.IsAuthenticated;
                         server.banner = conn.GreetingText;
                     }
-                    
+
                 }
 
             }

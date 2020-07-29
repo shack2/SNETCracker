@@ -5,15 +5,18 @@ namespace SNETCracker.Model
 {
     class CrackRedis : CrackService
     {
-        public CrackRedis() {
+        public CrackRedis()
+        {
 
         }
 
-        public override Server creack(String ip, int port,String username,String password,int timeOut) {
+        public override Server creack(String ip, int port, String username, String password, int timeOut)
+        {
             Server server = new Server();
-            String connectionStr = ip + ":" + port + ",connectTimeout=" + timeOut*1000;       
-            if (!password.Equals("空")) {
-                connectionStr+=",password="+password;
+            String connectionStr = ip + ":" + port + ",connectTimeout=" + timeOut * 1000;
+            if (!password.Equals("空"))
+            {
+                connectionStr += ",password=" + password;
             }
             ConnectionMultiplexer redis = null;
             try
@@ -29,9 +32,12 @@ namespace SNETCracker.Model
             {
                 throw e;
             }
-            finally {
-                if (redis != null) {
+            finally
+            {
+                if (redis != null)
+                {
                     redis.Close();
+
                 }
             }
             return server;
