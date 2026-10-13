@@ -1,0 +1,100 @@
+name: release
+
+# 打 tag（v*）触发构建并创建 GitHub Release；也可手动 workflow_dispatch 只构建验证不发版
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: build ${{ matrix.rid }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: windows-latest, rid: win-x64 }
+          - { os: ubuntu-latest, rid: linux-x64 }
+          - { os: macos-13, rid: osx-x64 }
+          - { os: macos-latest, rid: osx-arm64 }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # Native AOT Linux 工具链（macOS 自带 Xcode CLT，Windows 自带 MSVC）
+      - name: Install AOT toolchain (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      - name: Resolve version
+        id: ver
+        shell: bash
+        run: |
+          V="${GITHUB_REF_NAME}"
+          [[ "$V" == v* && "$GITHUB_REF" == refs/tags/* ]] && V="${V:1}" || V="0.0.0-ci"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GUI (AOT)
+        run: dotnet publish SPasswordCheckerV2/SPasswordCheckerV2.csproj -c Release -r ${{ matrix.rid }} -p:Version=${{ steps.ver.outputs.version }} --self-contained true
+
+      - name: Publish CLI spc (AOT)
+        run: dotnet publish SPasswordCheckerV2.Cmd/SPasswordCheckerV2.Cmd.csproj -c Release -r ${{ matrix.rid }} -p:Version=${{ steps.ver.outputs.version }} --self-contained true
+
+      # 组装：UI 发布产物（含 config）+ CLI 可执行文件，一个包双形态
+      - name: Assemble package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $ui = "SPasswordCheckerV2/bin/Release/net10.0/${{ matrix.rid }}/publish"
+          $cli = "SPasswordCheckerV2.Cmd/bin/Release/net10.0/${{ matrix.rid }}/publish"
+          $dist = "dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}"
+          New-Item -ItemType Directory -Path $dist -Force | Out-Null
+          Copy-Item "$ui/*" $dist -Recurse -Force
+          Copy-Item "$cli/spc.exe" "$dist/spc.exe" -Force
+          Compress-Archive -Path "$dist/*" -DestinationPath "dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}.zip" -Force
+          Get-ChildItem dist/*.zip | Select-Object Name, Length
+
+      - name: Assemble package (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          UI="SPasswordCheckerV2/bin/Release/net10.0/${{ matrix.rid }}/publish"
+          CLI="SPasswordCheckerV2.Cmd/bin/Release/net10.0/${{ matrix.rid }}/publish"
+          DIST="dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}"
+          mkdir -p "$DIST"
+          cp -r "$UI/." "$DIST/"
+          cp "$CLI/spc" "$DIST/spc"
+          chmod +x "$DIST/SPasswordCheckerV2" "$DIST/spc"
+          tar -czf "dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}.tar.gz" -C dist "SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}"
+          ls -la dist/*.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SNETCracker-${{ matrix.rid }}
+          path: |
+            dist/*.zip
+            dist/*.tar.gz
+          if-no-files-found: error
+
+  release:
+    name: GitHub Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          generate_release_notes: true
