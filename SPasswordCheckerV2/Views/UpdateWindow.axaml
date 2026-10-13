@@ -1,0 +1,116 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:SPasswordCheckerV2.Views"
+        xmlns:vm="using:SPasswordCheckerV2.ViewModels"
+        x:Class="SPasswordCheckerV2.Views.UpdateWindow"
+        x:DataType="vm:UpdateViewModel"
+        Title="版本更新"
+        Width="480" Height="380" CanResize="False"
+        Icon="avares://SPasswordCheckerV2/res/imgs/logo.png"
+        Background="{DynamicResource AppMsgContentBg}"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowDecorations="BorderOnly"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        FontSize="12"
+        FontFamily="Segoe UI,Microsoft YaHei,sans-serif"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Styles>
+        <!-- 卡片/标题/提示/次级按钮与主窗口、设置窗口共用 -->
+        <StyleInclude Source="avares://SPasswordCheckerV2/Styles/SharedStyles.axaml" />
+        <!-- 主按钮：与设置窗口 saveBtn 一致（实心强调色 + 模板级状态覆盖） -->
+        <Style Selector="Button.primaryBtn">
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentSolidFg}" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style Selector="Button.primaryBtn /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentSolidFg}" />
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.primaryBtn:pointerover:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentHover}" />
+        </Style>
+        <Style Selector="Button.primaryBtn:pressed:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentPressed}" />
+        </Style>
+        <Style Selector="Button.primaryBtn:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppCardBorder}" />
+        </Style>
+    </Window.Styles>
+
+    <Border BorderBrush="{DynamicResource AppMsgBorder}" BorderThickness="1">
+    <DockPanel>
+        <views:AppTitleBar DockPanel.Dock="Top" ShowMinimize="False" ShowMaximize="False"
+                           BarBackground="{DynamicResource AppMsgTitleBg}">
+            <views:AppTitleBar.LeftContent>
+                <TextBlock Text="版本更新" FontSize="13" FontWeight="SemiBold"
+                           Foreground="{DynamicResource AppTextPrimary}" />
+            </views:AppTitleBar.LeftContent>
+        </views:AppTitleBar>
+
+        <Border Classes="card" Margin="14">
+            <DockPanel>
+                <Border Classes="sectionHeader" DockPanel.Dock="Top">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <TextBlock Text="软件更新" Classes="sectionTitle" />
+                        <TextBlock Text="对接 SoftUpdate 服务，更新下载到运行目录" Classes="hintText"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <StackPanel DockPanel.Dock="Bottom" Margin="0,10,0,0">
+                    <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
+                        <TextBlock Text="下载进度" Classes="fieldLabel" VerticalAlignment="Center" />
+                        <ProgressBar Grid.Column="1" Height="16" Minimum="0" Maximum="100" Margin="8,0"
+                                     Value="{Binding DownLoadProcess}" VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="2" Text="{Binding DownLoadRatio}" FontSize="11" Width="150"
+                                   Foreground="{DynamicResource AppSuccessFg}" VerticalAlignment="Center" />
+                    </Grid>
+                    <TextBlock Text="{Binding Info}" Classes="hintText" Margin="0,6,0,0"
+                               TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10,0,0"
+                                HorizontalAlignment="Right">
+                        <Button Content="打开目录" Classes="toolBtn" Width="90" Height="34"
+                                IsVisible="{Binding CanOpenDir}"
+                                Command="{Binding OpenDirCommand}" />
+                        <Button Content="下载更新" Classes="primaryBtn" Width="90" Height="34"
+                                IsEnabled="{Binding CanDownload}"
+                                Command="{Binding UpdateDataCommand}" />
+                        <Button Content="关闭" Classes="toolBtn" Width="90" Height="34"
+                                Command="{Binding CancelUpdateCommand}"
+                                CommandParameter="{Binding $parent[Window]}" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Margin="0,12,0,0">
+                    <StackPanel Orientation="Horizontal" Spacing="16">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="当前版本" Classes="fieldLabel" />
+                            <TextBlock Text="{Binding CurrentVersion}" FontSize="15" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource AppAccent}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text="最新版本" Classes="fieldLabel" />
+                            <TextBlock Text="{Binding NewVersionText}" FontSize="15" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource AppSuccessFg}" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="{Binding FileInfoText}" Classes="hintText" VerticalAlignment="Center" />
+                    </StackPanel>
+                    <TextBlock Text="更新说明" Classes="fieldLabel" Margin="0,10,0,4" />
+                    <Border BorderBrush="{DynamicResource AppCardBorder}" BorderThickness="1" CornerRadius="6"
+                            MaxHeight="110" Padding="8">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <TextBlock Text="{Binding NotesText}" TextWrapping="Wrap"
+                                       Foreground="{DynamicResource AppTextPrimary}" />
+                        </ScrollViewer>
+                    </Border>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </DockPanel>
+    </Border>
+</Window>

@@ -1,7 +1,37 @@
-超级弱口令检查工具是一款Windows平台的弱口令审计工具，支持批量多线程检查，可快速发现弱密码、弱口令账号，密码支持和用户名结合进行检查，大大提高成功率，支持自定义服务端口和字典。
-工具采用C#开发，需要安装.NET Framework 4.0，工具目前支持SSH、RDP、SMB、MySQL、SQLServer、Oracle、FTP、MongoDB、Memcached、PostgreSQL、Telnet、SMTP、SMTP_SSL、POP3、POP3_SSL、IMAP、IMAP_SSL、SVN、VNC、Redis等服务的弱口令检查工作。
-工具特点：
-1.支持多种常见服务的口令破解，支持RDP（3389远程桌面）弱口令检查。
-2.支持批量导入IP地址或设置IP段，同时进行多个服务的弱口令检查。
-3.程序自带端口扫描功能，可以不借助第三方端口扫描工具进行检查。
-4.支持自定义检查的口令，自定义端口。
+# SNETCracker V2 · 超级弱口令检查工具
+
+跨平台弱口令/弱密码检测工具，支持 **42 种协议** 的密码验证，提供 **GUI 客户端** 与 **命令行（spc）** 双形态。
+
+V2 为全新重写版本（Avalonia + Native AOT，全协议自实现）。旧版 WinForms 代码见 `v1-legacy` 标签。
+
+## 特性
+
+- **42 种协议**：SSH / RDP / SMB / MySQL / SQLServer / PostgreSQL / Oracle / Redis / MongoDB / FTP / Telnet / VNC / SNMP / LDAP / WinRM / HTTP(S) / SMTP / POP3 / IMAP / MQTT / Kafka / RabbitMQ / ActiveMQ / Zookeeper / Cassandra / Neo4j / Elasticsearch / Memcached / SVN / Tomcat / WebLogic / DB2 / DM / Kingbase / ClickHouse / Rsync 等
+- **协议自实现**：SSH/MySQL/PG/Oracle/TDS/Mongo/Redis/FTP/邮件等均为最小化纯 C# 实现，零重型第三方依赖
+- **Native AOT**：单文件免安装，Windows / Linux / macOS 全平台
+- **大网段优化**：CIDR 批量目标、死主机短路、单机并发限流、账号熔断防锁定、SSH 单连接多密码复用
+- **CLI（spc）**：stdout 只输出命中结果（`[+]` 行 / JSON），可直接作为脚本或 AI 智能体工具调用
+
+## 下载
+
+见 [Releases](https://github.com/shack2/SNETCracker/releases)：每个平台包内含 GUI 客户端与 spc 命令行两个可执行文件及 `config/` 配置。
+
+## 构建
+
+```bash
+dotnet publish SPasswordCheckerV2/SPasswordCheckerV2.csproj -c Release -r win-x64      # GUI
+dotnet publish SPasswordCheckerV2.Cmd/SPasswordCheckerV2.Cmd.csproj -c Release -r win-x64  # CLI
+```
+
+## 项目结构
+
+| 目录 | 说明 |
+| --- | --- |
+| `SPasswordCheckerV2/` | Avalonia GUI 客户端 |
+| `SPasswordCheckerV2.Cmd/` | 命令行版本（spc） |
+| `shack2.pass.checker/` | 协议检测核心库（42 协议自实现 + 扫描引擎） |
+| `SPasswordCheckerV2.SKILL/` | Kimi 智能体技能包定义 |
+
+## 声明
+
+本工具仅供**授权安全测试**与自查使用，请遵守当地法律法规，勿对未授权目标使用。

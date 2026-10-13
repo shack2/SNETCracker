@@ -1,0 +1,572 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:SPasswordCheckerV2.Views"
+        xmlns:vm="using:SPasswordCheckerV2.ViewModels"
+        xmlns:m="using:SPasswordCheckerV2.Data"
+        x:Class="SPasswordCheckerV2.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Title="超级弱口令检查工具V2.0"
+        Width="1200" Height="960"
+        Icon="avares://SPasswordCheckerV2/res/imgs/logo.png"
+        Background="{DynamicResource AppWindowBg}"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowDecorations="BorderOnly"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        FontSize="12"
+        FontFamily="Segoe UI,Microsoft YaHei,sans-serif"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- 自建标题栏（替代 UrsaWindow 铬）：左 logo/标题，右 设置/主题/帮助 + 窗口按钮 -->
+    <DockPanel>
+        <views:AppTitleBar DockPanel.Dock="Top">
+            <views:AppTitleBar.LeftContent>
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                    <Border Width="28" Height="28" CornerRadius="6"
+                            Background="{DynamicResource AppAccent}">
+                        <Image Source="avares://SPasswordCheckerV2/res/imgs/logo1.png" Width="17" Height="17" />
+                    </Border>
+                    <TextBlock Text="超级弱口令检查工具" FontSize="13" FontWeight="SemiBold"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource AppTextPrimary}" />
+                    <Border CornerRadius="4" Padding="6,2" VerticalAlignment="Center"
+                            Background="{DynamicResource AppAccent}">
+                        <TextBlock Text="V2.0" FontSize="10" FontWeight="Medium"
+                                   Foreground="{DynamicResource AppAccentSolidFg}" />
+                    </Border>
+                </StackPanel>
+            </views:AppTitleBar.LeftContent>
+
+            <views:AppTitleBar.RightContent>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="" Spacing="2" VerticalAlignment="Center" Margin="10,0,6,0">
+            <Button Classes="iconBtn" ToolTip.Tip="设置">
+                <Path Data="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"
+                      Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="2"
+                      StrokeLineCap="Round" StrokeJoin="Round"
+                      Width="16" Height="16" Stretch="Uniform" />
+                <Button.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuItem Header="字典配置" Command="{Binding ShowSetWindowCommand}" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+            <Button Classes="iconBtn" ToolTip.Tip="切换深色/浅色主题"
+                    Command="{Binding ToggleThemeCommand}">
+                <Grid>
+                    <!-- 浅色主题下显示月亮：点击切到深色 -->
+                    <Panel IsVisible="{Binding !IsDarkTheme}">
+                        <Path Data="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"
+                              Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="2"
+                              StrokeLineCap="Round" StrokeJoin="Round"
+                              Width="16" Height="16" Stretch="Uniform" />
+                    </Panel>
+                    <!-- 深色主题下显示太阳：点击切到浅色 -->
+                    <Panel IsVisible="{Binding IsDarkTheme}">
+                        <Path Data="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"
+                              Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="2"
+                              StrokeLineCap="Round" StrokeJoin="Round"
+                              Width="16" Height="16" Stretch="Uniform" />
+                    </Panel>
+                </Grid>
+            </Button>
+            <Button Classes="iconBtn" ToolTip.Tip="帮助">
+                <Path Data="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"
+                      Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="2"
+                      StrokeLineCap="Round" StrokeJoin="Round"
+                      Width="16" Height="16" Stretch="Uniform" />
+                <Button.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuItem Header="关于" Command="{Binding AboutCommand}" />
+                        <MenuItem Header="版本" Command="{Binding VersionCommand}" />
+                        <MenuItem Header="版本更新" Command="{Binding CheckVersionCommand}" />
+                        <MenuItem Header="问题反馈" Command="{Binding FeedCommand}" />
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
+            </views:AppTitleBar.RightContent>
+        </views:AppTitleBar>
+
+        <DockPanel.Styles>
+        <!-- 卡片/区块标题/输入框/次级按钮/侧栏列表样式已抽取到 Styles/SharedStyles.axaml（与设置窗口共用） -->
+        <StyleInclude Source="avares://SPasswordCheckerV2/Styles/SharedStyles.axaml" />
+        <!-- 下拉/数值输入与文本框同风格 -->
+        <Style Selector="ComboBox.field">
+            <Setter Property="Background" Value="{DynamicResource AppInputBg}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="MinHeight" Value="34" />
+        </Style>
+        <Style Selector="NumericUpDown.field">
+            <Setter Property="Background" Value="{DynamicResource AppInputBg}" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="MinHeight" Value="34" />
+        </Style>
+        <!-- 文字按钮（侧栏全选/清空） -->
+        <Style Selector="Button.textBtn">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentFg}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="4,2" />
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+        <Style Selector="Button.textBtn:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppPrimaryTintBg}" />
+        </Style>
+        <Style Selector="Button.textBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppPrimaryTintBg}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <!-- 开始按钮：实心 primary，状态完整 -->
+        <Style Selector="Button.startBtn">
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentSolidFg}" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <!-- Semi 模板的 ContentPresenter 不转发 Button.Foreground，且各伪类状态
+             直接改写 ContentPresenter 背景/边框，需按其变体模式做模板级覆盖 -->
+        <Style Selector="Button.startBtn /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentSolidFg}" />
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.startBtn:pointerover:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentHover}" />
+        </Style>
+        <Style Selector="Button.startBtn:pressed:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentPressed}" />
+        </Style>
+        <Style Selector="Button.startBtn:disabled /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentDisabledBg}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+        </Style>
+        <Style Selector="Button.startBtn:disabled">
+            <Setter Property="Opacity" Value="0.7" />
+        </Style>
+        <!-- PathIcon 的 Foreground 不参与文本继承，同样需要显式覆盖 -->
+        <Style Selector="Button.startBtn PathIcon">
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentSolidFg}" />
+        </Style>
+        <Style Selector="Button.startBtn:disabled PathIcon">
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+        </Style>
+        <!-- 顶部图标按钮（对齐 HTML window-btn） -->
+        <Style Selector="Button.iconBtn">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Button.iconBtn:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppMuted}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+        </Style>
+        <Style Selector="Button.iconBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppMuted}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.iconBtn:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppDivider}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.iconBtn:pressed">
+            <Setter Property="Background" Value="{DynamicResource AppDivider}" />
+        </Style>
+        <!-- 侧栏服务列表 -->
+        <Style Selector="ListBox.sideList">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+        </Style>
+        <Style Selector="ListBox.sideList ListBoxItem">
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Margin" Value="0,1" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBox.sideList ListBoxItem:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+        </Style>
+        <Style Selector="ListBox.sideList ListBoxItem:selected">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="ListBox.sideList CheckBox">
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+        </Style>
+        <Style Selector="ListBox.sideList CheckBox:checked">
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentFg}" />
+        </Style>
+        <!-- 结果表格（TableView，框架核心控件，Semi 原生主题） -->
+        <Style Selector="TableView.results">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="TableView.results TableViewRow">
+            <Setter Property="MinHeight" Value="34" />
+        </Style>
+        <Style Selector="TableView.results TableViewCell">
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style Selector="TableView.results TableViewColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource AppMuted}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+            <Setter Property="FontWeight" Value="Medium" />
+            <Setter Property="Height" Value="36" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <!-- 日志框 -->
+        <Style Selector="TextBox.logBox">
+            <Setter Property="Background" Value="{DynamicResource AppLogBg}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="12,10" />
+            <Setter Property="FontFamily" Value="JetBrains Mono, Consolas, Microsoft YaHei UI" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+        </Style>
+        <!-- 状态栏 -->
+        <Style Selector="TextBlock.statLabel">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="TextBlock.statValue">
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style Selector="Border.vDivider">
+            <Setter Property="Width" Value="1" />
+            <Setter Property="Height" Value="12" />
+            <Setter Property="Background" Value="{DynamicResource AppDivider}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <!-- 折叠按钮 -->
+        <Style Selector="Button.collapseBtn">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="4,4" />
+            <Setter Property="CornerRadius" Value="4" />
+        </Style>
+        <Style Selector="Button.collapseBtn:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+        </Style>
+    </DockPanel.Styles>
+
+    <DockPanel>
+
+        <!-- 底部状态栏 -->
+        <Border DockPanel.Dock="Bottom" Height="32" Background="{DynamicResource AppCardBackground}"
+                BorderBrush="{DynamicResource AppCardBorder}" BorderThickness="0,1,0,0">
+            <DockPanel Margin="12,0">
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="线程" Classes="statLabel" />
+                        <TextBlock Text="{Binding RunThread}" Classes="statValue" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="检查队列" Classes="statLabel" />
+                        <TextBlock Text="{Binding CheckerTaskInfo}" Classes="statValue" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="成功" Classes="statLabel" />
+                        <TextBlock Text="{Binding SuccessCount}" Classes="statValue"
+                                   Foreground="{DynamicResource AppSuccessFg}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4">
+                        <TextBlock Text="端口探测" Classes="statLabel" />
+                        <TextBlock Text="{Binding ScanPortProgressText}" Classes="statValue" />
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="14" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <Border Width="6" Height="6" CornerRadius="3"
+                                Background="{DynamicResource AppSuccessFg}"
+                                IsVisible="{Binding IsRunning}" />
+                        <Border Width="6" Height="6" CornerRadius="3"
+                                Background="{DynamicResource AppTextSecondary}"
+                                IsVisible="{Binding !IsRunning}" />
+                        <TextBlock Text="运行中" Classes="statValue"
+                                   Foreground="{DynamicResource AppSuccessFg}"
+                                   IsVisible="{Binding IsRunning}" />
+                        <TextBlock Text="空闲" Classes="statValue"
+                                   IsVisible="{Binding !IsRunning}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                        <TextBlock Text="进度" Classes="statLabel" />
+                        <ProgressBar Width="110" Height="4" Minimum="0" Maximum="100"
+                                     Value="{Binding ProgressValue}" VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding ProgressValue, StringFormat={}{0}%}" Classes="statValue" MinWidth="30" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                        <TextBlock Text="用时" Classes="statLabel" />
+                        <TextBlock Text="{Binding UseTime}" Classes="statValue" />
+                    </StackPanel>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <Grid ColumnDefinitions="220,*">
+
+            <!-- 左侧：检测服务 -->
+            <Border Grid.Column="0" Background="{DynamicResource AppSidebarBg}"
+                    BorderBrush="{DynamicResource AppCardBorder}" BorderThickness="0,0,1,0">
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Padding="10"
+                            BorderBrush="{DynamicResource AppCardBorder}" BorderThickness="0,0,0,1">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="10"
+                                        VerticalAlignment="Center">
+                                <Button Classes="textBtn" Content="全选" Click="OnSideAllSelected" />
+                                <Button Classes="textBtn" Content="清空" Click="OnSideClearSelected" />
+                            </StackPanel>
+                            <TextBlock Text="检测服务" Classes="sectionTitle" VerticalAlignment="Center" />
+                        </DockPanel>
+                    </Border>
+                    <Border DockPanel.Dock="Top" Padding="12,6">
+                        <TextBlock Text="{Binding SelectedCountText}" FontSize="11"
+                                   Foreground="{DynamicResource AppTextSecondary}" />
+                    </Border>
+                    <ListBox Classes="sideList" ItemsSource="{Binding ListServies}" Margin="8,2,8,8">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="m:Service">
+                                <Grid>
+                                    <!-- 勾选高亮：纯装饰层，不影响内容测量 -->
+                                    <Border CornerRadius="4" BorderThickness="1"
+                                            Background="{DynamicResource AppPrimaryTintBg}"
+                                            BorderBrush="{DynamicResource AppPrimaryTintBorder}"
+                                            IsVisible="{Binding IsChecked}" />
+                                    <CheckBox IsChecked="{Binding IsChecked}"  Height="30" VerticalAlignment="Center" Margin="5,0">
+                                        <TextBlock Text="{Binding ServiceName}" FontSize="12"  />
+                                    </CheckBox>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+
+            <!-- 右侧主区 -->
+            <Grid Grid.Column="1" RowDefinitions="Auto,Auto,*,Auto" RowSpacing="10" Margin="10,0,15,15">
+
+                <!-- 检测目标与凭据（合并卡片共享行网格：左目标框跨账号/密码/后缀三行等高，选项行收在引擎参数行后，整体对齐） -->
+                <Border Classes="card" Grid.Row="0">
+                    <Grid Margin="16,12,16,14" ColumnDefinitions="5*,7*" ColumnSpacing="16"
+                          RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="12">
+                        <!-- 左：检测目标（跨右侧三行等高 = 34*3+12*2 = 126，超出内部滚动）+ 导入目标 -->
+                        <TextBox Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Classes="filled" Height="126"
+                                 Text="{Binding TxtTarget, Mode=TwoWay}"
+                                 AcceptsReturn="True" TextWrapping="Wrap" VerticalContentAlignment="Top"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 PlaceholderText="请输入目标：支持单 IP / IP 段（192.168.1.1-192.168.1.254）/ CIDR / 多行混合"
+                                 ToolTip.Tip="示例格式：&#10;192.168.1.1&#10;192.168.1.1-192.168.1.254&#10;192.168.3.0/24" />
+                        <!-- 右：账号 + 导入 -->
+                        <Grid Grid.Column="1" Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <TextBox Classes="filled" Text="{Binding Username, Mode=TwoWay}"
+                                     PlaceholderText="单个用户名，或字典文件路径"
+                                     ToolTip.Tip="直接输入单个用户名；或粘贴/导入字典文件路径（文件存在即按字典读取）"
+                                     IsEnabled="{Binding !IsAutoSelectDic}" />
+                            <Button Grid.Column="1" Classes="toolBtn"
+                                    Command="{Binding ImportUserNameDicCommand}" ToolTip.Tip="导入用户名字典">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <Path Data="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
+                                          Stroke="{DynamicResource AppTextSecondary}" StrokeThickness="2"
+                                          Width="13" Height="13" Stretch="Uniform" />
+                                    <TextBlock Text="导入" FontSize="12" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        <!-- 右：密码 + 导入 -->
+                        <Grid Grid.Column="1" Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <TextBox Classes="filled" Text="{Binding Password, Mode=TwoWay}"
+                                     PlaceholderText="单个密码，或字典文件路径"
+                                     ToolTip.Tip="直接输入单个密码；或粘贴/导入字典文件路径（文件存在即按字典读取）"
+                                     IsEnabled="{Binding !IsAutoSelectDic}" />
+                            <Button Grid.Column="1" Classes="toolBtn"
+                                    Command="{Binding ImportPasswordDicCommand}" ToolTip.Tip="导入密码字典">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <Path Data="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
+                                          Stroke="{DynamicResource AppTextSecondary}" StrokeThickness="2"
+                                          Width="13" Height="13" Stretch="Uniform" />
+                                    <TextBlock Text="导入" FontSize="12" />
+                                </StackPanel>
+                            </Button>
+                        </Grid>
+                        <!-- 右：后缀 / 线程 / 超时 / 重试 -->
+                        <Grid Grid.Column="1" Grid.Row="2" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="12">
+                            <TextBox Classes="filled" Text="{Binding UsernameExt, Mode=TwoWay}"
+                                     PlaceholderText="账号后缀，如 @test.com"
+                                     ToolTip.Tip="账号后面追加固定值，通常用于邮箱后缀" />
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="线程" Classes="fieldLabel" />
+                                <ComboBox Classes="field" Width="60"
+                                          ItemsSource="{Binding ThreadCountOptions}"
+                                          SelectedItem="{Binding ThreadCount, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="超时" Classes="fieldLabel" />
+                                <ComboBox Classes="field" Width="60"
+                                          ItemsSource="{Binding TimeoutOptions}"
+                                          SelectedItem="{Binding Timeout, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="重试" Classes="fieldLabel" />
+                                <NumericUpDown Classes="field" Width="72"
+                                               Minimum="0" Maximum="3"
+                                               Value="{Binding RetryCount, Mode=TwoWay}" />
+                            </StackPanel>
+                        </Grid>
+                        <!-- 底行通栏：导入目标最左，引擎参数（单机并发/熔断阈值）居中，选项复选框收在熔断阈值后 -->
+                        <StackPanel Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Orientation="Horizontal" Spacing="17">
+                            <Button Classes="toolBtn" VerticalAlignment="Center"
+                                    Command="{Binding ImportTargetCommand}" ToolTip.Tip="导入目标列表">
+                                <StackPanel Orientation="Horizontal" Spacing="6">
+                                    <Path Data="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"
+                                          Stroke="{DynamicResource AppTextSecondary}" StrokeThickness="2"
+                                          Width="13" Height="13" Stretch="Uniform" />
+                                    <TextBlock Text="导入目标" FontSize="12" />
+                                </StackPanel>
+                            </Button>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="单机并发" Classes="fieldLabel"
+                                           ToolTip.Tip="单主机认证并发上限，0=不限；防全部线程压同一台机器触发防爆破" />
+                                <NumericUpDown Classes="field" Width="72" Minimum="0" Maximum="100"
+                                               Value="{Binding PerHostLimit, Mode=TwoWay}" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <TextBlock Text="熔断阈值" Classes="fieldLabel"
+                                           ToolTip.Tip="同一账号连续失败达此值跳过剩余密码，防触发账号锁定策略（严格环境建议 5~10）" />
+                                <NumericUpDown Classes="field" Width="72" Minimum="1" Maximum="1000"
+                                               Value="{Binding LockoutFailLimit, Mode=TwoWay}" />
+                            </StackPanel>
+                            <CheckBox Content="自动加载字典" VerticalAlignment="Center"
+                                      IsChecked="{Binding IsAutoSelectDic, Mode=TwoWay}" />
+                            <CheckBox Content="探测端口是否开放" VerticalAlignment="Center"
+                                      IsChecked="{Binding IsCheckPort, Mode=TwoWay}" />
+                            <CheckBox Content="成功一个账号停止" VerticalAlignment="Center"
+                                      IsChecked="{Binding SuccessOneIsContinue, Mode=TwoWay}" />
+                            <CheckBox Content="死主机短路" VerticalAlignment="Center"
+                                      IsChecked="{Binding HostFailFast, Mode=TwoWay}"
+                                      ToolTip.Tip="端口探测中主机连续纯超时判死不存活，跳过其剩余端口（大网段提速数倍；全端口被防火墙过滤的活主机会漏判）" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- 操作行：停止左 / 开始右 -->
+                <Grid Grid.Row="1" ColumnDefinitions="Auto,*">
+                    <Button Classes="toolBtn" Height="36" MinWidth="110"
+                            Command="{Binding StopCommand}" IsEnabled="{Binding IsRunning}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Data="M5 5h14v14H5z" Width="13" Height="13" />
+                            <TextBlock Text="停止任务" FontSize="13" />
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Column="1" Classes="startBtn" Height="36" MinWidth="120"
+                            HorizontalAlignment="Right"
+                            Command="{Binding StartCheckCommand}" IsEnabled="{Binding !IsRunning}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Data="M5 3v18l14-9z" Width="14" Height="14" />
+                            <TextBlock Text="开始检查" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+                <!-- 检测结果（无标题栏，复制/删除/导出走表格右键菜单；导出/复制应用筛选） -->
+                <Border Classes="card" Grid.Row="2">
+                    <DockPanel>
+                        <Border DockPanel.Dock="Top" IsVisible="{Binding HasResult}" Margin="0,0,0,6">
+                            <TextBox Width="240" Height="28" FontSize="12"
+                                     HorizontalAlignment="Right" VerticalContentAlignment="Center"
+                                     PlaceholderText="筛选 IP / 服务 / 账户 / 密码 / Banner…"
+                                     Text="{Binding ResultFilter}" />
+                        </Border>
+                        <Grid Margin="0,0,0,0" MinHeight="120">
+                            <TableView x:Name="checkList" Classes="results"
+                                       ItemsSource="{Binding ResultsView}"
+                                       CanUserResizeColumns="True"
+                                       SelectionChanged="OnCheckListSelectionChanged">
+                                <TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="复 制" Command="{Binding CopyServiceCommand}">
+                                            <MenuItem.Icon>
+                                                <Image Source="avares://SPasswordCheckerV2/res/imgs/copy1.png" Width="16" Height="16" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="删除选中" Command="{Binding DeleteSelectedCheckResultCommand}">
+                                            <MenuItem.Icon>
+                                                <Image Source="avares://SPasswordCheckerV2/res/imgs/del.png" Width="16" Height="16" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="导 出" Command="{Binding ExportCheckResultCommand}">
+                                            <MenuItem.Icon>
+                                                <Image Source="avares://SPasswordCheckerV2/res/imgs/export.png" Width="16" Height="16" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </TableView.ContextMenu>
+                                <TableView.Columns>
+                                    <TableViewColumn Header="序号" Binding="{Binding Index}" Width="56" x:DataType="m:CheckResult" />
+                                    <TableViewColumn Header="IP 地址" Binding="{Binding IP}" Width="*" x:DataType="m:CheckResult" />
+                                    <TableViewColumn Header="服务" Binding="{Binding ServiceName}" Width="80" x:DataType="m:CheckResult" />
+                                    <TableViewColumn Header="端口" Binding="{Binding Port}" Width="60" x:DataType="m:CheckResult" />
+                                    <TableViewColumn Header="账户" Binding="{Binding Username}" Width="*" x:DataType="m:CheckResult" />
+                                    <TableViewColumn Header="密码" Binding="{Binding Password}" Width="*" x:DataType="m:CheckResult" />
+                                    <TableViewColumn Header="Banner" Binding="{Binding Banner}" Width="*" x:DataType="m:CheckResult" />
+                                    <TableViewColumn Header="用时[毫秒]" Binding="{Binding UseTime}" Width="90" x:DataType="m:CheckResult" />
+                                </TableView.Columns>
+                            </TableView>
+                            <!-- 空状态 -->
+                            <Border IsVisible="{Binding !HasResult}" IsHitTestVisible="False"
+                                    Background="{DynamicResource AppCardBackground}"
+                                    VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <StackPanel Spacing="6" HorizontalAlignment="Center">
+                                    <Path Data="M11 3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM21 21l-4.35-4.35"
+                                          Stroke="{DynamicResource AppTextSecondary}" StrokeThickness="2"
+                                          Width="16" Height="16" Stretch="Uniform" Opacity="0.45"
+                                          HorizontalAlignment="Center" />
+                                    <TextBlock Text="暂无检测结果-配置检测目标并点击「开始检查」" FontSize="12"
+                                               Foreground="{DynamicResource AppTextSecondary}" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </DockPanel>
+                </Border>
+
+                <!-- 运行日志 -->
+                <Border Classes="card" Grid.Row="3">
+                    <DockPanel>
+                        <Border Classes="sectionHeader" DockPanel.Dock="Top">
+                            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                <Button Classes="collapseBtn" Click="OnToggleLog" Width="18" Height="18">
+                                    <TextBlock Text="▼" FontSize="9" HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Foreground="{DynamicResource AppTextSecondary}" />
+                                </Button>
+                                <Path Data="M4 17l6-6-6-6M12 19h8"
+                                      Stroke="{DynamicResource AppTextSecondary}" StrokeThickness="2"
+                                      Width="14" Height="14" Stretch="Uniform" />
+                                <TextBlock Text="运行日志" Classes="sectionTitle" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <TextBox x:Name="txtLog" Classes="logBox"
+                                 Text="{Binding TxtLogs, Mode=OneWay}" IsReadOnly="True"
+                                 PlaceholderText="暂无日志"
+                                 TextWrapping="Wrap"
+                                 MinHeight="150"
+                                 Margin="16,12,16,14"
+                                 IsVisible="{Binding IsLogExpanded}" />
+                    </DockPanel>
+                </Border>
+
+            </Grid>
+        </Grid>
+
+    </DockPanel>
+    </DockPanel>
+</Window>

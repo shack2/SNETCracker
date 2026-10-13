@@ -1,0 +1,4 @@
+admin
+kafka
+test
+user

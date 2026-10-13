@@ -1,0 +1,65 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:SPasswordCheckerV2.Views"
+        x:Class="SPasswordCheckerV2.Views.MsgBoxWindow"
+        MinWidth="340" MaxWidth="520"
+        SizeToContent="Height" CanResize="False"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowDecorations="None"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="{DynamicResource AppMsgContentBg}"
+        FontSize="12"
+        FontFamily="Segoe UI,Microsoft YaHei,sans-serif">
+    <Window.Styles>
+        <Style Selector="Button.msgBtn">
+            <Setter Property="MinWidth" Value="84" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="14,0" />
+        </Style>
+        <Style Selector="Button.msgBtn.primary">
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentSolidFg}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.msgBtn.primary:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppAccentHover}" />
+        </Style>
+        <Style Selector="Button.msgBtn.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentHover}" />
+        </Style>
+        <Style Selector="Button.msgBtn.ghost">
+            <Setter Property="Background" Value="{DynamicResource AppMuted}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+        </Style>
+        <Style Selector="Button.msgBtn.ghost:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+        </Style>
+        <Style Selector="Button.msgBtn.ghost:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+        </Style>
+    </Window.Styles>
+
+    <Border BorderBrush="{DynamicResource AppMsgBorder}" BorderThickness="1">
+    <DockPanel>
+        <!-- 弹窗配色与主窗口相反：标题栏更深/灰（AppMsgTitleBg），内容更浅（AppMsgContentBg） -->
+        <views:AppTitleBar DockPanel.Dock="Top" ShowMinimize="False" ShowMaximize="False"
+                           BarBackground="{DynamicResource AppMsgTitleBg}">
+            <views:AppTitleBar.LeftContent>
+                <TextBlock x:Name="titleText" FontSize="13" FontWeight="SemiBold"
+                           Foreground="{DynamicResource AppTextPrimary}" />
+            </views:AppTitleBar.LeftContent>
+        </views:AppTitleBar>
+        <StackPanel Margin="20,18,20,18" Spacing="18">
+            <TextBlock x:Name="messageText" TextWrapping="Wrap" FontSize="13"
+                       Foreground="{DynamicResource AppTextPrimary}" />
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right">
+                <Button x:Name="cancelBtn" Classes="msgBtn ghost" Content="取 消" Click="OnCancel" />
+                <Button x:Name="okBtn" Classes="msgBtn primary" Content="确 定" Click="OnOk" />
+            </StackPanel>
+        </StackPanel>
+    </DockPanel>
+    </Border>
+</Window>

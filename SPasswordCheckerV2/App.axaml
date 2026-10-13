@@ -1,0 +1,162 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:semi="https://irihi.tech/semi"
+             x:Class="SPasswordCheckerV2.App"
+             RequestedThemeVariant="Dark">
+    <Application.Styles>
+        <semi:SemiTheme Locale="zh-CN" />
+        <!-- TableView 为框架核心控件，Semi 主题内置；行悬停/选中色由主题字典覆写 -->
+    </Application.Styles>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <!-- 深色主题（对齐 HTML 设计 tokens） -->
+                <ResourceDictionary x:Key="Dark">
+                    <SolidColorBrush x:Key="AppWindowBg" Color="#0B0C0F" />
+                    <SolidColorBrush x:Key="AppHeaderBg" Color="#14161C" />
+                    <SolidColorBrush x:Key="AppSidebarBg" Color="#14161C" />
+                    <SolidColorBrush x:Key="AppCardBackground" Color="#14161C" />
+                    <SolidColorBrush x:Key="AppCardBorder" Color="#272A34" />
+                    <SolidColorBrush x:Key="AppAccent" Color="#14B8A6" />
+                    <SolidColorBrush x:Key="AppAccentHover" Color="#18C9B6" />
+                    <SolidColorBrush x:Key="AppAccentPressed" Color="#0E9487" />
+                    <SolidColorBrush x:Key="AppAccentDisabledBg" Color="#1E2A33" />
+                    <SolidColorBrush x:Key="AppAccentSolidFg" Color="#04201C" />
+                    <SolidColorBrush x:Key="AppAccentFg" Color="#14B8A6" />
+                    <SolidColorBrush x:Key="AppAccentBg" Color="#14262A" />
+                    <SolidColorBrush x:Key="AppPrimaryTintBg" Color="#14262A" />
+                    <SolidColorBrush x:Key="AppPrimaryTintBorder" Color="#143637" />
+                    <SolidColorBrush x:Key="AppTextPrimary" Color="#E8E9ED" />
+                    <SolidColorBrush x:Key="AppTextSecondary" Color="#8B909E" />
+                    <SolidColorBrush x:Key="AppMuted" Color="#1E212A" />
+                    <SolidColorBrush x:Key="AppHoverBg" Color="#1A1D24" />
+                    <SolidColorBrush x:Key="AppActiveBg" Color="#14262A" />
+                    <SolidColorBrush x:Key="AppDivider" Color="#272A34" />
+                    <!-- TableView 行分隔线对齐 AppDivider（覆写 Semi 默认 SemiColorBorder） -->
+                    <StaticResource x:Key="TableViewLineBrush" ResourceKey="AppDivider" />
+                    <!-- TableView 表头整条底色（含列间拖拽柄缝隙，Semi 默认 Transparent 会漏底） -->
+                    <StaticResource x:Key="TableViewColumnHeaderBackground" ResourceKey="AppMuted" />
+                    <SolidColorBrush x:Key="AppInputBg" Color="#1E212A" />
+                    <SolidColorBrush x:Key="AppInputBorder" Color="Transparent" />
+                    <SolidColorBrush x:Key="AppInputBorderFocus" Color="#14B8A6" />
+                    <SolidColorBrush x:Key="AppStatChipBg" Color="#1E212A" />
+                    <SolidColorBrush x:Key="AppChipBorder" Color="#272A34" />
+                    <SolidColorBrush x:Key="AppSuccessBg" Color="#152823" />
+                    <SolidColorBrush x:Key="AppSuccessBorder" Color="#173929" />
+                    <SolidColorBrush x:Key="AppSuccessFg" Color="#22C55E" />
+                    <SolidColorBrush x:Key="AppLogBg" Color="#0B0C0F" />
+                    <SolidColorBrush x:Key="AppDangerFg" Color="#EF4444" />
+                    <SolidColorBrush x:Key="AppDangerBg" Color="#2A1517" />
+                    <SolidColorBrush x:Key="AppDangerBorder" Color="#5C2A2D" />
+                    <SolidColorBrush x:Key="AppAccentGradient" Color="#14B8A6" />
+                    <SolidColorBrush x:Key="AppAccentGradientHover" Color="#10A99A" />
+                    <!-- 弹窗专用：标题深/内容浅，反差比窗口-卡片再大一档 -->
+                    <SolidColorBrush x:Key="AppMsgTitleBg" Color="#0B0C0F" />
+                    <SolidColorBrush x:Key="AppMsgContentBg" Color="#191C24" />
+                    <SolidColorBrush x:Key="AppMsgBorder" Color="#3A3F4D" />
+                    <!-- Semi 基础令牌覆写：进度条/下拉/菜单/表格选中统一 teal -->
+                    <SolidColorBrush x:Key="SemiColorPrimary" Color="#14B8A6" />
+                    <SolidColorBrush x:Key="SemiColorPrimaryPointerover" Color="#18C9B6" />
+                    <SolidColorBrush x:Key="SemiColorPrimaryActive" Color="#0E9487" />
+                    <SolidColorBrush x:Key="SemiColorPrimaryLight" Color="#14262A" />
+                    <SolidColorBrush x:Key="SemiColorPrimaryDisabled" Color="#1E3B36" />
+                    <!-- Semi 按钮文字色统一到应用色板 -->
+                    <SolidColorBrush x:Key="ButtonDefaultPrimaryForeground" Color="#E8E9ED" />
+                    <SolidColorBrush x:Key="ButtonDefaultSecondaryForeground" Color="#8B909E" />
+                    <SolidColorBrush x:Key="ButtonDefaultTertiaryForeground" Color="#E8E9ED" />
+                    <SolidColorBrush x:Key="ButtonDefaultSuccessForeground" Color="#22C55E" />
+                    <SolidColorBrush x:Key="ButtonDefaultWarningForeground" Color="#F59E0B" />
+                    <SolidColorBrush x:Key="ButtonDefaultDangerForeground" Color="#EF4444" />
+                    <SolidColorBrush x:Key="ButtonDefaultDisabledForeground" Color="#565B66" />
+                    <SolidColorBrush x:Key="ButtonDefaultColorfulPrimaryForeground" Color="#14B8A6" />
+                    <!-- Semi CheckBox 文字/勾选色统一 -->
+                    <SolidColorBrush x:Key="CheckBoxForeground" Color="#E8E9ED" />
+                    <SolidColorBrush x:Key="CheckBoxDisabledForeground" Color="#565B66" />
+                    <SolidColorBrush x:Key="CheckBoxPointeroverBorderBrush" Color="#14B8A6" />
+                    <SolidColorBrush x:Key="CheckBoxPressedBorderBrush" Color="#0D8A7E" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedDefaultBackground" Color="#14B8A6" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedDefaultBorderBrush" Color="#14B8A6" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedPointeroverBackground" Color="#10A99A" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedPointeroverBorderBrush" Color="#10A99A" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedPressedBackground" Color="#0D8A7E" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedPressedBorderBrush" Color="#0D8A7E" />
+                </ResourceDictionary>
+                <!-- 浅色主题 -->
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="AppWindowBg" Color="#F3F4F6" />
+                    <SolidColorBrush x:Key="AppHeaderBg" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="AppSidebarBg" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="AppCardBackground" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="AppCardBorder" Color="#E5E7EB" />
+                    <SolidColorBrush x:Key="AppAccent" Color="#0D9488" />
+                    <SolidColorBrush x:Key="AppAccentHover" Color="#0FA598" />
+                    <SolidColorBrush x:Key="AppAccentPressed" Color="#0A7A70" />
+                    <SolidColorBrush x:Key="AppAccentDisabledBg" Color="#E2E5E9" />
+                    <SolidColorBrush x:Key="AppAccentSolidFg" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="AppAccentFg" Color="#0D9488" />
+                    <SolidColorBrush x:Key="AppAccentBg" Color="#E6F4F3" />
+                    <SolidColorBrush x:Key="AppPrimaryTintBg" Color="#E6F4F3" />
+                    <SolidColorBrush x:Key="AppPrimaryTintBorder" Color="#CEE9E7" />
+                    <SolidColorBrush x:Key="AppTextPrimary" Color="#1F2328" />
+                    <SolidColorBrush x:Key="AppTextSecondary" Color="#6B7280" />
+                    <SolidColorBrush x:Key="AppMuted" Color="#F0F1F4" />
+                    <SolidColorBrush x:Key="AppHoverBg" Color="#F0F1F4" />
+                    <SolidColorBrush x:Key="AppActiveBg" Color="#E6F4F3" />
+                    <SolidColorBrush x:Key="AppDivider" Color="#E5E7EB" />
+                    <StaticResource x:Key="TableViewLineBrush" ResourceKey="AppDivider" />
+                    <StaticResource x:Key="TableViewColumnHeaderBackground" ResourceKey="AppMuted" />
+                    <SolidColorBrush x:Key="AppInputBg" Color="#F6F7F9" />
+                    <SolidColorBrush x:Key="AppInputBorder" Color="Transparent" />
+                    <SolidColorBrush x:Key="AppInputBorderFocus" Color="#0D9488" />
+                    <SolidColorBrush x:Key="AppStatChipBg" Color="#F0F1F4" />
+                    <SolidColorBrush x:Key="AppChipBorder" Color="#E5E7EB" />
+                    <SolidColorBrush x:Key="AppSuccessBg" Color="#E8F7EE" />
+                    <SolidColorBrush x:Key="AppSuccessBorder" Color="#C6EBD4" />
+                    <SolidColorBrush x:Key="AppSuccessFg" Color="#16A34A" />
+                    <SolidColorBrush x:Key="AppLogBg" Color="#F8F9FB" />
+                    <SolidColorBrush x:Key="AppDangerFg" Color="#DC2626" />
+                    <SolidColorBrush x:Key="AppDangerBg" Color="#FEF2F2" />
+                    <SolidColorBrush x:Key="AppDangerBorder" Color="#FECACA" />
+                    <SolidColorBrush x:Key="AppAccentGradient" Color="#0D9488" />
+                    <SolidColorBrush x:Key="AppAccentGradientHover" Color="#0B8276" />
+                    <!-- 弹窗专用：标题浅灰/内容纯白 -->
+                    <SolidColorBrush x:Key="AppMsgTitleBg" Color="#E5E7EB" />
+                    <SolidColorBrush x:Key="AppMsgContentBg" Color="#FFFFFF" />
+                    <SolidColorBrush x:Key="AppMsgBorder" Color="#C9CDD4" />
+                    <!-- Semi 基础令牌覆写 -->
+                    <SolidColorBrush x:Key="SemiColorPrimary" Color="#0D9488" />
+                    <SolidColorBrush x:Key="SemiColorPrimaryPointerover" Color="#0FA598" />
+                    <SolidColorBrush x:Key="SemiColorPrimaryActive" Color="#0A7A70" />
+                    <SolidColorBrush x:Key="SemiColorPrimaryLight" Color="#E6F4F3" />
+                    <SolidColorBrush x:Key="SemiColorPrimaryDisabled" Color="#B6DEDA" />
+                    <!-- Semi 按钮文字色统一 -->
+                    <SolidColorBrush x:Key="ButtonDefaultPrimaryForeground" Color="#1F2328" />
+                    <SolidColorBrush x:Key="ButtonDefaultSecondaryForeground" Color="#6B7280" />
+                    <SolidColorBrush x:Key="ButtonDefaultTertiaryForeground" Color="#1F2328" />
+                    <SolidColorBrush x:Key="ButtonDefaultSuccessForeground" Color="#16A34A" />
+                    <SolidColorBrush x:Key="ButtonDefaultWarningForeground" Color="#D97706" />
+                    <SolidColorBrush x:Key="ButtonDefaultDangerForeground" Color="#DC2626" />
+                    <SolidColorBrush x:Key="ButtonDefaultDisabledForeground" Color="#9CA3AF" />
+                    <SolidColorBrush x:Key="ButtonDefaultColorfulPrimaryForeground" Color="#0D9488" />
+                    <!-- Semi CheckBox 文字/勾选色统一 -->
+                    <SolidColorBrush x:Key="CheckBoxForeground" Color="#1F2328" />
+                    <SolidColorBrush x:Key="CheckBoxDisabledForeground" Color="#9CA3AF" />
+                    <SolidColorBrush x:Key="CheckBoxPointeroverBorderBrush" Color="#0D9488" />
+                    <SolidColorBrush x:Key="CheckBoxPressedBorderBrush" Color="#0A6E64" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedDefaultBackground" Color="#0D9488" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedDefaultBorderBrush" Color="#0D9488" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedPointeroverBackground" Color="#0B8276" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedPointeroverBorderBrush" Color="#0B8276" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedPressedBackground" Color="#0A6E64" />
+                    <SolidColorBrush x:Key="CheckBoxCheckedPressedBorderBrush" Color="#0A6E64" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+
+            <!-- 全局圆角 -->
+            <CornerRadius x:Key="ButtonCornerRadius">4</CornerRadius>
+            <CornerRadius x:Key="TextBoxCornerRadius">6</CornerRadius>
+            <CornerRadius x:Key="ComboBoxCornerRadius">6</CornerRadius>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

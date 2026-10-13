@@ -1,0 +1,7 @@
+SYSDBA
+SYSAUDIT
+SYSSSO
+SYSDBO
+SYS
+test
+admin

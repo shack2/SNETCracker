@@ -1,0 +1,80 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:SPasswordCheckerV2.Views"
+        x:Class="SPasswordCheckerV2.Views.FeedbackWindow"
+        Width="520" MinHeight="380"
+        SizeToContent="Height" CanResize="False"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowDecorations="None"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        Background="{DynamicResource AppMsgContentBg}"
+        FontSize="12"
+        FontFamily="Segoe UI,Microsoft YaHei,sans-serif">
+    <Window.Styles>
+        <Style Selector="Button.msgBtn">
+            <Setter Property="MinWidth" Value="84" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Padding" Value="14,0" />
+        </Style>
+        <Style Selector="Button.msgBtn.primary">
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentSolidFg}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+        </Style>
+        <Style Selector="Button.msgBtn.primary:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppAccentHover}" />
+        </Style>
+        <Style Selector="Button.msgBtn.primary:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentHover}" />
+        </Style>
+        <Style Selector="Button.msgBtn.ghost">
+            <Setter Property="Background" Value="{DynamicResource AppMuted}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+        </Style>
+        <Style Selector="Button.msgBtn.ghost:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+        </Style>
+        <Style Selector="Button.msgBtn.ghost:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+        </Style>
+        <Style Selector="TextBox.fbInput">
+            <Setter Property="Background" Value="{DynamicResource AppInputBg}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppInputBorder}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="10,8" />
+        </Style>
+    </Window.Styles>
+
+    <Border BorderBrush="{DynamicResource AppMsgBorder}" BorderThickness="1">
+    <DockPanel>
+        <!-- 弹窗配色与主窗口相反：标题栏更深/灰（AppMsgTitleBg），内容更浅（AppMsgContentBg） -->
+        <views:AppTitleBar DockPanel.Dock="Top" ShowMinimize="False" ShowMaximize="False"
+                           BarBackground="{DynamicResource AppMsgTitleBg}">
+            <views:AppTitleBar.LeftContent>
+                <TextBlock Text="问题反馈" FontSize="13" FontWeight="SemiBold"
+                           Foreground="{DynamicResource AppTextPrimary}" />
+            </views:AppTitleBar.LeftContent>
+        </views:AppTitleBar>
+        <StackPanel Margin="20,16,20,16" Spacing="10">
+            <TextBlock Text="遇到的问题或建议（必填，最多 4000 字）" Foreground="{DynamicResource AppTextPrimary}" />
+            <TextBox x:Name="contentBox" Classes="fbInput" AcceptsReturn="True" TextWrapping="Wrap"
+                     MinHeight="130" MaxLength="4000" VerticalContentAlignment="Top"
+                     PlaceholderText="请描述问题现象、复现步骤或改进建议..." />
+            <TextBlock Text="联系方式（选填，邮箱 / QQ，便于我们回复）" Foreground="{DynamicResource AppTextPrimary}" />
+            <TextBox x:Name="contactBox" Classes="fbInput" MaxLength="200"
+                     PlaceholderText="选填" />
+            <TextBlock x:Name="statusText" TextWrapping="Wrap" FontSize="11"
+                       Foreground="{DynamicResource AppTextSecondary}"
+                       Text="提交后将携带应用标识与当前版本号；也可邮件反馈：1341413415@qq.com" />
+            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Right" Margin="0,4,0,0">
+                <Button x:Name="cancelBtn" Classes="msgBtn ghost" Content="取 消" Click="OnCancel" />
+                <Button x:Name="submitBtn" Classes="msgBtn primary" Content="提交反馈" Click="OnSubmit" />
+            </StackPanel>
+        </StackPanel>
+    </DockPanel>
+    </Border>
+</Window>

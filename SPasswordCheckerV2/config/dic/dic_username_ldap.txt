@@ -1,0 +1,9 @@
+cn=admin,dc=example,dc=com
+cn=admin,dc=test,dc=com
+cn=admin
+cn=manager
+cn=root
+uid=admin,ou=system
+admin
+administrator
+ldap

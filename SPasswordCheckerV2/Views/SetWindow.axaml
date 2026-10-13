@@ -1,0 +1,163 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:views="using:SPasswordCheckerV2.Views"
+        xmlns:vm="using:SPasswordCheckerV2.ViewModels"
+        xmlns:data="using:SPasswordCheckerV2.Data"
+        x:Class="SPasswordCheckerV2.Views.SetWindow"
+        x:DataType="vm:SetViewModel"
+        Title="配置更新"
+        Width="900" Height="700" MinWidth="800" MinHeight="700"
+        Icon="avares://SPasswordCheckerV2/res/imgs/logo.png"
+        Background="{DynamicResource AppWindowBg}"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowDecorations="BorderOnly"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        FontSize="12"
+        FontFamily="Segoe UI,Microsoft YaHei,sans-serif"
+        WindowStartupLocation="CenterOwner">
+
+    <Window.Styles>
+        <!-- 卡片/区块标题/输入框/次级按钮/侧栏列表样式抽取自 Styles/SharedStyles.axaml（与主窗口共用） -->
+        <StyleInclude Source="avares://SPasswordCheckerV2/Styles/SharedStyles.axaml" />
+        <!-- 主按钮：与主界面 startBtn 一致（实心强调色 + 模板级状态覆盖） -->
+        <Style Selector="Button.saveBtn">
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentSolidFg}" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontSize" Value="13" />
+        </Style>
+        <Style Selector="Button.saveBtn /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Foreground" Value="{DynamicResource AppAccentSolidFg}" />
+            <Setter Property="Background" Value="{DynamicResource AppAccent}" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+        </Style>
+        <Style Selector="Button.saveBtn:pointerover:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentHover}" />
+        </Style>
+        <Style Selector="Button.saveBtn:pressed:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppAccentPressed}" />
+        </Style>
+        <!-- 端口表格：TableView（框架核心控件，Semi 原生主题），行/表头色由 App.axaml 主题字典统一覆写 -->
+        <Style Selector="TableView">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <!-- 紧凑行高：行最小高 3px（内容自适应），单元格纵向留白 3px -->
+        <Style Selector="TableView TableViewRow">
+            <Setter Property="MinHeight" Value="3" />
+        </Style>
+        <Style Selector="TableView TableViewCell">
+            <Setter Property="Padding" Value="12,3" />
+        </Style>
+        <!-- 端口编辑框：撑满列宽 + 去掉输入框默认高度撑高行 -->
+        <Style Selector="TableView TextBox.portEditor">
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="Padding" Value="4,1" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+    </Window.Styles>
+    <DockPanel>
+        <views:AppTitleBar DockPanel.Dock="Top" ShowMinimize="False" ShowMaximize="False">
+            <views:AppTitleBar.LeftContent>
+                <TextBlock Text="配置更新" FontSize="13" FontWeight="SemiBold"
+                           Foreground="{DynamicResource AppTextPrimary}" />
+            </views:AppTitleBar.LeftContent>
+        </views:AppTitleBar>
+    <Grid Margin="10,10">
+        <TabControl>
+        <TabItem Header="端口配置" Padding="5">
+            <Border Classes="card">
+                <DockPanel>
+                    <Border Classes="sectionHeader" DockPanel.Dock="Top">
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <TextBlock Text="服务端口" Classes="sectionTitle" />
+                            <TextBlock Text="端口列可直接编辑，多个端口用英文逗号隔开" Classes="hintText"
+                                       VerticalAlignment="Center" Margin="4,0,0,0" />
+                        </StackPanel>
+                    </Border>
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right"
+                                Margin="16,0,16,14">
+                        <Button Content="保存配置" Classes="saveBtn"
+                                Command="{Binding SaveSevicesCommand}"
+                                Width="110" Height="34" />
+                    </StackPanel>
+                    <TableView x:Name="portGrid" Margin="16,12,16,14"
+                               ItemsSource="{Binding ListServies}"
+                               ToolTip.Tip="端口列可直接编辑，多个端口用英文逗号隔开！">
+                        <TableView.Columns>
+                            <TableViewColumn Header="服务名" Width="130" x:DataType="data:Service">
+                                <TableViewColumn.CellTemplate>
+                                    <DataTemplate x:DataType="data:Service">
+                                        <TextBlock Text="{Binding ServiceName}" VerticalAlignment="Center" />
+                                    </DataTemplate>
+                                </TableViewColumn.CellTemplate>
+                            </TableViewColumn>
+                            <TableViewColumn Header="端口" Width="*" x:DataType="data:Service"
+                                             HorizontalContentAlignment="Stretch">
+                                <TableViewColumn.CellTemplate>
+                                    <DataTemplate x:DataType="data:Service">
+                                        <TextBox Classes="portEditor"
+                                                 Text="{Binding PortsText, Mode=TwoWay}"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 VerticalContentAlignment="Center"
+                                                 LostFocus="OnPortEditorLostFocus" />
+                                    </DataTemplate>
+                                </TableViewColumn.CellTemplate>
+                            </TableViewColumn>
+                        </TableView.Columns>
+                    </TableView>
+                </DockPanel>
+            </Border>
+        </TabItem>
+        <TabItem Header="字典配置" Padding="5">
+            <Border Classes="card">
+                <DockPanel>
+                    <Border Classes="sectionHeader" DockPanel.Dock="Top">
+                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                            <TextBlock Text="服务字典" Classes="sectionTitle" />
+                            <TextBlock Text="每行一条，保存时自动去重去空行；SSL 与非 SSL 服务共用字典" Classes="hintText"
+                                       VerticalAlignment="Center" Margin="4,0,0,0" />
+                        </StackPanel>
+                    </Border>
+                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" Spacing="8"
+                                HorizontalAlignment="Right" Margin="16,0,16,14">
+                        <TextBlock Text="{Binding DicStatText}" Classes="hintText" VerticalAlignment="Center"
+                                   Margin="0,0,8,0" />
+                        <Button Content="导入用户名…" Classes="toolBtn" Height="34"
+                                Command="{Binding ImportDicUsernameCommand}" />
+                        <Button Content="导入密码…" Classes="toolBtn" Height="34"
+                                Command="{Binding ImportDicPasswordCommand}" />
+                        <Button Content="保存字典" Classes="saveBtn" Command="{Binding SaveDicsCommand}"
+                                Width="110" Height="34" />
+                    </StackPanel>
+                    <Grid Margin="16,12,16,14" ColumnDefinitions="140,*" ColumnSpacing="12">
+                        <ListBox Grid.Column="0" Classes="sideList"
+                                 ItemsSource="{Binding ListServies}"
+                                 SelectedItem="{Binding SelectedDicService}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate x:DataType="data:Service">
+                                    <TextBlock Text="{Binding ServiceName}" FontSize="12" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                        <Grid Grid.Column="1" RowDefinitions="Auto,*,Auto,*" RowSpacing="6">
+                            <TextBlock Grid.Row="0" Text="用户名字典" Classes="fieldLabel" />
+                            <TextBox Grid.Row="1" Classes="filled" MinHeight="0" AcceptsReturn="True"
+                                     Text="{Binding DicUsernameText}"
+                                     PlaceholderText="每行一个用户名" VerticalContentAlignment="Top" />
+                            <TextBlock Grid.Row="2" Classes="fieldLabel">
+                                <Run Text="密码字典" />
+                                <Run Text="（%user% 将替换为当前用户名）" FontSize="10" />
+                            </TextBlock>
+                            <TextBox Grid.Row="3" Classes="filled" MinHeight="0" AcceptsReturn="True"
+                                     Text="{Binding DicPasswordText}"
+                                     PlaceholderText="每行一个密码" VerticalContentAlignment="Top" />
+                        </Grid>
+                    </Grid>
+                </DockPanel>
+            </Border>
+        </TabItem>
+    </TabControl>
+    </Grid>
+    </DockPanel>
+</Window>

@@ -1,0 +1,93 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- 主窗口/设置窗口共用样式（U2 抽取，改风格只改这一处） -->
+
+    <!-- 卡片 -->
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="{DynamicResource AppCardBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="8" />
+    </Style>
+    <!-- 区块标题行：底部分隔线 -->
+    <Style Selector="Border.sectionHeader">
+        <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+        <Setter Property="BorderThickness" Value="0,0,0,1" />
+        <Setter Property="Padding" Value="16,5" />
+    </Style>
+    <Style Selector="TextBlock.sectionTitle">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+    </Style>
+    <Style Selector="TextBlock.hintText">
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+    </Style>
+    <Style Selector="TextBlock.fieldLabel">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <!-- 输入框：bg-input + border -->
+    <Style Selector="TextBox.filled">
+        <Setter Property="Background" Value="{DynamicResource AppInputBg}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Padding" Value="10,7" />
+        <Setter Property="MinHeight" Value="34" />
+    </Style>
+    <Style Selector="TextBox.filled:focus">
+        <Setter Property="BorderBrush" Value="{DynamicResource AppInputBorderFocus}" />
+    </Style>
+    <!-- 次级按钮：bg-muted + border -->
+    <Style Selector="Button.toolBtn">
+        <Setter Property="Background" Value="{DynamicResource AppMuted}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Padding" Value="10,0" />
+    </Style>
+    <Style Selector="Button.toolBtn:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+    </Style>
+    <Style Selector="Button.toolBtn:pressed">
+        <Setter Property="Background" Value="{DynamicResource AppDivider}" />
+    </Style>
+    <!-- Semi 模板在各伪类状态直接改写 ContentPresenter 背景/边框，需模板级覆盖 -->
+    <Style Selector="Button.toolBtn:pointerover:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+    </Style>
+    <Style Selector="Button.toolBtn:pressed:not(:disabled) /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AppDivider}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+    </Style>
+    <Style Selector="Button.toolBtn:disabled /template/ ContentPresenter#PART_ContentPresenter">
+        <Setter Property="Background" Value="{DynamicResource AppMuted}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource AppDivider}" />
+        <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+    </Style>
+    <!-- 侧栏服务列表 -->
+    <Style Selector="ListBox.sideList">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+    <Style Selector="ListBox.sideList ListBoxItem">
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Margin" Value="0,1" />
+        <Setter Property="Padding" Value="6,4" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+    </Style>
+    <Style Selector="ListBox.sideList ListBoxItem:pointerover">
+        <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+    </Style>
+    <Style Selector="ListBox.sideList ListBoxItem:selected">
+        <Setter Property="Background" Value="{DynamicResource AppPrimaryTintBg}" />
+        <Setter Property="Foreground" Value="{DynamicResource AppAccentFg}" />
+    </Style>
+</Styles>

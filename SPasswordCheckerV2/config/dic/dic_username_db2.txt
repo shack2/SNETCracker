@@ -1,0 +1,7 @@
+db2inst1
+db2admin
+db2user
+db2fenc1
+dasusr1
+admin
+test

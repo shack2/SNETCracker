@@ -1,0 +1,4 @@
+elastic
+admin
+kibana
+logstash

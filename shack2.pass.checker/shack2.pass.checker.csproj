@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Version>2.0.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <!-- 协议检测核心库：全协议自实现，零 UI 依赖，AOT/裁剪兼容 -->
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- 允许 TestRun 访问 internal 编解码器（Ber/Bin/CredentialExpander）做纯单元测试 -->
+    <InternalsVisibleTo Include="TestRun" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="RdpVerify.Lib" Version="1.2.1" />
+    <PackageReference Include="SMBLibrary" Version="1.5.8" />
+  </ItemGroup>
+
+</Project>

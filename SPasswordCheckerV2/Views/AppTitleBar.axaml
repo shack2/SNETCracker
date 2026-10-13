@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="SPasswordCheckerV2.Views.AppTitleBar"
+             x:Name="Root"
+             Height="46">
+    <!-- 自建窗口标题栏（替代 UrsaWindow 铬）：左内容 / 拖拽区 / 右内容 / 最小化·最大化·关闭 -->
+    <UserControl.Styles>
+        <!-- 标题栏默认底色 AppHeaderBg；弹窗设 BarBackground 时由代码后置置为本地值覆写（TargetNullValue 里套 DynamicResource 解析不到会致 Background=null，命中测试失效拖不动窗口） -->
+        <Style Selector="Border.titleBarBg">
+            <Setter Property="Background" Value="{DynamicResource AppHeaderBg}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorder}" />
+            <Setter Property="BorderThickness" Value="0,0,0,1" />
+        </Style>
+        <Style Selector="Button.winBtn">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextSecondary}" />
+            <Setter Property="Width" Value="30" />
+            <Setter Property="Height" Value="30" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="CornerRadius" Value="0" />
+        </Style>
+        <Style Selector="Button.winBtn:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+            <Setter Property="Foreground" Value="{DynamicResource AppTextPrimary}" />
+        </Style>
+        <Style Selector="Button.winBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppHoverBg}" />
+        </Style>
+        <Style Selector="Button.winBtn:pressed /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AppDivider}" />
+        </Style>
+        <Style Selector="Button.winBtn.closeBtn:pointerover">
+            <Setter Property="Background" Value="#E81123" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+        </Style>
+        <Style Selector="Button.winBtn.closeBtn:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="#E81123" />
+        </Style>
+    </UserControl.Styles>
+
+    <Border x:Name="PART_Drag" Classes="titleBarBg"
+            DoubleTapped="OnDragDoubleTapped"
+            PointerPressed="OnDragPointerPressed">
+        <Grid ColumnDefinitions="Auto,Auto,*">
+            <ContentControl Grid.Column="0" VerticalAlignment="Center" Margin="20,0,0,0"
+                            Content="{Binding LeftContent, ElementName=Root}" />
+            <ContentControl Grid.Column="1" VerticalAlignment="Center"
+                            Content="{Binding RightContent, ElementName=Root}" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Classes="winBtn" ToolTip.Tip="最小化" Click="OnMinimize"
+                        IsVisible="{Binding ShowMinimize, ElementName=Root}">
+                    <Path Data="M5 12h14" Stroke="{Binding $parent[Button].Foreground}"
+                          StrokeThickness="1.5" StrokeLineCap="Round"
+                          Width="14" Height="14" Stretch="Uniform" />
+                </Button>
+                <Button Classes="winBtn" ToolTip.Tip="最大化/还原" Click="OnToggleMaximize"
+                        IsVisible="{Binding ShowMaximize, ElementName=Root}">
+                    <Path Data="M5 5h14v14H5z" Stroke="{Binding $parent[Button].Foreground}"
+                          StrokeThickness="1.5"
+                          Width="14" Height="14" Stretch="Uniform" />
+                </Button>
+                <Button Classes="winBtn closeBtn" ToolTip.Tip="关闭" Click="OnClose"  Margin="0,0,10,0">
+                    <Path Data="M6 6l12 12M18 6L6 18" Stroke="{Binding $parent[Button].Foreground}"
+                          StrokeThickness="1.5" StrokeLineCap="Round"
+                          Width="14" Height="14" Stretch="Uniform" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>
