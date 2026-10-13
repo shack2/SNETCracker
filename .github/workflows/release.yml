@@ -56,7 +56,8 @@ jobs:
           $cli = "SPasswordCheckerV2.Cmd/bin/Release/net10.0/${{ matrix.rid }}/publish"
           $dist = "dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}"
           New-Item -ItemType Directory -Path $dist -Force | Out-Null
-          Copy-Item "$ui/*" $dist -Recurse -Force
+          Copy-Item "$ui/*" $dist -Recurse -Force -Exclude *.pdb
+          Get-ChildItem $dist -Recurse -Filter *.pdb | Remove-Item -Force
           Copy-Item "$cli/spc.exe" "$dist/spc.exe" -Force
           Compress-Archive -Path "$dist/*" -DestinationPath "dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}.zip" -Force
           Get-ChildItem dist/*.zip | Select-Object Name, Length
@@ -69,6 +70,7 @@ jobs:
           DIST="dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}"
           mkdir -p "$DIST"
           cp -r "$UI/." "$DIST/"
+          find "$DIST" -name '*.pdb' -delete
           cp "$CLI/spc" "$DIST/spc"
           chmod +x "$DIST/SPasswordCheckerV2" "$DIST/spc"
           tar -czf "dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}.tar.gz" -C dist "SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}"
