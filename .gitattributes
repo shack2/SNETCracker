@@ -1,0 +1,11 @@
+# 统一文本换行符（仓库内 LF，Windows 工作区 CRLF）
+* text=auto
+
+# 二进制文件不做换行符转换
+*.png binary
+*.jpg binary
+*.ico binary
+*.dll binary
+*.exe binary
+*.zip binary
+*.gz binary
