@@ -60,6 +60,13 @@ jobs:
           Get-ChildItem $dist -Recurse -Filter *.pdb | Remove-Item -Force
           Copy-Item "$cli/spc.exe" "$dist/spc.exe" -Force
           Compress-Archive -Path "$dist/*" -DestinationPath "dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}.zip" -Force
+          # SKILL 技能包：SKILL.md + spc.exe + config，供 Kimi 等智能体直接使用
+          $skill = "dist/SPasswordCheckerV2.SKILL"
+          New-Item -ItemType Directory -Path "$skill/bin" -Force | Out-Null
+          Copy-Item "SPasswordCheckerV2.SKILL/SKILL.md" "$skill/SKILL.md" -Force
+          Copy-Item "$cli/spc.exe" "$skill/bin/spc.exe" -Force
+          Copy-Item "SPasswordCheckerV2/config" "$skill/bin/config" -Recurse -Force
+          Compress-Archive -Path "$skill/*" -DestinationPath "dist/SPasswordCheckerV2.SKILL_${{ steps.ver.outputs.version }}.zip" -Force
           Get-ChildItem dist/*.zip | Select-Object Name, Length
 
       - name: Assemble package (Linux/macOS)
@@ -74,14 +81,36 @@ jobs:
           cp "$CLI/spc" "$DIST/spc"
           chmod +x "$DIST/SPasswordCheckerV2" "$DIST/spc"
           tar -czf "dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}.tar.gz" -C dist "SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}"
-          ls -la dist/*.tar.gz
+          # 更新服务仅收 zip：额外打一份（保留可执行位）
+          python3 - <<'PY'
+          import os, zipfile
+          name = "SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}"
+          with zipfile.ZipFile(f"dist/{name}.zip", "w", zipfile.ZIP_DEFLATED) as z:
+              for root, _, files in os.walk(f"dist/{name}"):
+                  for f in files:
+                      p = os.path.join(root, f)
+                      zi = zipfile.ZipInfo(os.path.relpath(p, "dist"))
+                      zi.external_attr = (os.stat(p).st_mode & 0xFFFF) << 16
+                      zi.compress_type = zipfile.ZIP_DEFLATED
+                      with open(p, "rb") as fh:
+                          z.writestr(zi, fh.read())
+          PY
+          ls -la dist/*.tar.gz dist/*.zip
 
       - uses: actions/upload-artifact@v4
         with:
           name: SNETCracker-${{ matrix.rid }}
           path: |
-            dist/*.zip
-            dist/*.tar.gz
+            dist/SNETCracker_*.zip
+            dist/SNETCracker_*.tar.gz
+          if-no-files-found: error
+
+      - name: Upload SKILL package
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SNETCracker-SKILL
+          path: dist/SPasswordCheckerV2.SKILL_*.zip
           if-no-files-found: error
 
   release:
@@ -101,7 +130,7 @@ jobs:
           files: artifacts/*
           generate_release_notes: true
 
-  # 发版后把 win-x64 包同步到自建更新服务（soft.shack2.cn），老客户端启动即可收到更新提示
+  # 发版后把四平台包同步到自建更新服务（soft.shack2.cn），老客户端启动即可收到更新提示
   sync-update-service:
     name: sync soft.shack2.cn
     needs: build
@@ -113,8 +142,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: SNETCracker-win-x64
+          pattern: SNETCracker-*
           path: pkg
 
-      - name: Upload win-x64 package to SoftUpdate
+      - name: Upload all platform packages to SoftUpdate
         run: python3 .github/scripts/softupdate_sync.py
