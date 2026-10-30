@@ -60,13 +60,6 @@ jobs:
           Get-ChildItem $dist -Recurse -Filter *.pdb | Remove-Item -Force
           Copy-Item "$cli/spc.exe" "$dist/spc.exe" -Force
           Compress-Archive -Path "$dist/*" -DestinationPath "dist/SNETCracker_${{ steps.ver.outputs.version }}_${{ matrix.rid }}.zip" -Force
-          # SKILL 技能包：SKILL.md + spc.exe + config，供 Kimi 等智能体直接使用
-          $skill = "dist/SPasswordCheckerV2.SKILL"
-          New-Item -ItemType Directory -Path "$skill/bin" -Force | Out-Null
-          Copy-Item "SPasswordCheckerV2.SKILL/SKILL.md" "$skill/SKILL.md" -Force
-          Copy-Item "$cli/spc.exe" "$skill/bin/spc.exe" -Force
-          Copy-Item "SPasswordCheckerV2/config" "$skill/bin/config" -Recurse -Force
-          Compress-Archive -Path "$skill/*" -DestinationPath "dist/SPasswordCheckerV2.SKILL_${{ steps.ver.outputs.version }}.zip" -Force
           Get-ChildItem dist/*.zip | Select-Object Name, Length
 
       - name: Assemble package (Linux/macOS)
@@ -105,9 +98,27 @@ jobs:
             dist/SNETCracker_*.tar.gz
           if-no-files-found: error
 
-      - name: Upload SKILL package
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v4
+  skill-package:
+    name: SKILL (Windows + Linux)
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: SNETCracker-win-x64
+          path: pkg-win
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: SNETCracker-linux-x64
+          path: pkg-linux
+
+      - name: Assemble dual-platform SKILL package
+        run: python3 .github/scripts/skill_package.py
+
+      - uses: actions/upload-artifact@v4
         with:
           name: SNETCracker-SKILL
           path: dist/SPasswordCheckerV2.SKILL_*.zip
@@ -115,7 +126,7 @@ jobs:
 
   release:
     name: GitHub Release
-    needs: build
+    needs: [build, skill-package]
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:

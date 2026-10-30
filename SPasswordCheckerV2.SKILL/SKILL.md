@@ -1,11 +1,14 @@
 ---
 name: SPasswordCheckerV2.SKILL
-description: 用本地 CLI 工具 spc.exe（Native AOT 单文件，约 5 MB）对网络服务做弱口令/弱密码检测。当用户要求扫描或验证主机、网段、服务的弱密码（如 SSH/RDP/MySQL/Redis/MongoDB 等 42 种协议的密码审计、凭据验证、爆破测试、口令强度检查）时使用。触发词：弱口令、弱密码、密码审计、password audit、weak password、credential check、口令爆破验证。
+description: 用本地 CLI 工具 spc（Windows/Linux Native AOT 单文件，每个约 7 MB）对网络服务做弱口令/弱密码检测。当用户要求扫描或验证主机、网段、服务的弱密码（如 SSH/RDP/MySQL/Redis/MongoDB 等 42 种协议的密码审计、凭据验证、爆破测试、口令强度检查）时使用。触发词：弱口令、弱密码、密码审计、password audit、weak password、credential check、口令爆破验证。
 ---
 
 # spc 弱口令检测
 
-`bin/spc.exe` 是 Windows x64 Native AOT 单文件工具（约 7 MB），无需 .NET 运行时。工作目录必须设为 `bin/`（exe 按相对路径读 `config/`）。`./spc.exe --version` 可查看版本、`--help` 查看完整参数。
+- `bin/spc.exe`：Windows x64 可执行文件。
+- `bin/spc`：Linux x64 可执行文件，首次使用前执行 `chmod +x ./spc`。
+
+两者均为 Native AOT 单文件工具（每个约 7 MB），无需 .NET 运行时。工作目录必须设为 `bin/`（程序按相对路径读取 `config/`）。使用 `--version` 查看版本、`--help` 查看完整参数。本文 Windows 示例使用 `./spc.exe`，Linux 下替换为 `./spc`。
 
 ## 输出契约（AI 调用必读）
 
@@ -52,7 +55,7 @@ cd bin
 ./spc.exe --update   # 检查更新：有新版自动下载 zip 更新包到软件运行目录，结果行在 stdout
 ```
 
-配置 `config/update.ini`（server/appId/channel/key/enabled）。stdout 结果：`[update] 已是最新版本 X` 或 `[update] 已下载 X（N 个文件）到 <目录>`；未命中更新时退出码也是 0。
+配置 `config/update.ini`（server/appId/channel/key/enabled）。`--update` 会按当前操作系统和架构获取对应平台包。stdout 结果：`[update] 已是最新版本 X` 或 `[update] 已下载 X（N 个文件）到 <目录>`；未命中更新时退出码也是 0。
 
 ## 要点
 
