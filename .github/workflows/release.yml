@@ -38,7 +38,25 @@ jobs:
         shell: bash
         run: |
           V="${GITHUB_REF_NAME}"
-          [[ "$V" == v* && "$GITHUB_REF" == refs/tags/* ]] && V="${V:1}" || V="0.0.0-ci"
+          if [[ "$V" == v* && "$GITHUB_REF" == refs/tags/* ]]; then
+            V="${V:1}"
+          else
+            # 手动构建使用项目当前版本，并确保 UI/CLI 没有漂移
+            V=$(python - <<'PY'
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          def project_version(path):
+              return ET.parse(Path(path)).getroot().findtext("./PropertyGroup/Version").strip()
+
+          ui = project_version("SPasswordCheckerV2/SPasswordCheckerV2.csproj")
+          cli = project_version("SPasswordCheckerV2.Cmd/SPasswordCheckerV2.Cmd.csproj")
+          if ui != cli:
+              raise SystemExit(f"UI/CLI version mismatch: {ui} != {cli}")
+          print(ui)
+          PY
+          )
+          fi
           echo "version=$V" >> "$GITHUB_OUTPUT"
 
       - name: Publish GUI (AOT)

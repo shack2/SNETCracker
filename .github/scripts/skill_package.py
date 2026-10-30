@@ -1,19 +1,11 @@
 #!/usr/bin/env python3
 """Assemble one SKILL archive with Windows and Linux Native AOT binaries."""
 
-import os
 from pathlib import Path
 import zipfile
 
 
 ROOT = Path(__file__).resolve().parents[2]
-
-
-def resolve_version() -> str:
-    ref_name = os.environ.get("GITHUB_REF_NAME", "")
-    if ref_name.startswith("v") and os.environ.get("GITHUB_REF", "").startswith("refs/tags/"):
-        return ref_name[1:]
-    return "0.0.0-ci"
 
 
 def find_archive(directory: Path, rid: str) -> Path:
@@ -40,10 +32,19 @@ def write_entry(archive: zipfile.ZipFile, filename: str, data: bytes, executable
     archive.writestr(entry, data)
 
 
+def archive_version(archive: Path, rid: str) -> str:
+    prefix = "SNETCracker_"
+    suffix = f"_{rid}.zip"
+    return archive.name[len(prefix):-len(suffix)]
+
+
 def main() -> None:
-    version = resolve_version()
     windows_archive = find_archive(ROOT / "pkg-win", "win-x64")
     linux_archive = find_archive(ROOT / "pkg-linux", "linux-x64")
+    version = archive_version(windows_archive, "win-x64")
+    linux_version = archive_version(linux_archive, "linux-x64")
+    if version != linux_version:
+        raise RuntimeError(f"Windows/Linux version mismatch: {version} != {linux_version}")
     output = ROOT / "dist" / f"SPasswordCheckerV2.SKILL_{version}.zip"
     output.parent.mkdir(parents=True, exist_ok=True)
 
