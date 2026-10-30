@@ -169,6 +169,8 @@ jobs:
       SOFTUPDATE_API_KEY: ${{ secrets.SOFTUPDATE_API_KEY }}
       SOFTUPDATE_SERVER: http://soft.shack2.cn
     steps:
+      - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           pattern: SNETCracker-*
