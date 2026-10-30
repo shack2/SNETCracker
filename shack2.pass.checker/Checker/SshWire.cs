@@ -10,13 +10,13 @@ namespace SNETCracker.Checker
     /// <summary>
     /// SSH 最小客户端：仅实现弱口令检测所需的能力 ——
     /// 版本横幅交换 + 算法协商 + 密钥交换（curve25519-sha256 / ecdh-sha2-nistp256 / diffie-hellman-group14-sha256）
-    /// + aes128-ctr/hmac-sha2-256 传输层 + userauth password 认证。
+    /// + AES-CTR/CBC、3DES-CBC/hmac-sha2-256 传输层 + userauth password 认证。
     /// 替代 SSH.NET + BouncyCastle（合计约 5.7 MB IL）。
-    /// 协议参考 RFC 4251/4252/4253/4256、RFC 5656（ECDH）、RFC 3526（DH group14）、RFC 7748/8731（Curve25519）。
+    /// 协议参考 RFC 4251/4252/4253/4256、RFC 4344（CTR/CBC）、RFC 5656（ECDH）、RFC 3526（DH group14）、RFC 7748/8731（Curve25519）。
     /// 零第三方依赖、AOT 安全。不校验服务端主机密钥签名（弱口令场景无意义）。
     /// 支持同一连接上连续多次 password 认证（Handshake 后反复 TryPassword）；
     /// 服务端按 MaxAuthTries 等策略主动断开时返回 Closed，由调用方重连继续。
-    /// 不支持：公钥认证、交互式键盘认证、rekey、压缩、其他加密算法。
+    /// 不支持：公钥认证、rekey、压缩。
     /// </summary>
     internal sealed class SshWire : IDisposable
     {
@@ -30,10 +30,15 @@ namespace SNETCracker.Checker
         private const string KexCurve25519 = "curve25519-sha256";
         private const string KexEcdhP256 = "ecdh-sha2-nistp256";
         private const string KexDhG14 = "diffie-hellman-group14-sha256";
+        private static readonly string[] CipherNames =
+        {
+            "aes256-ctr", "aes192-ctr", "aes128-ctr",
+            "aes256-cbc", "aes192-cbc", "aes128-cbc", "3des-cbc"
+        };
 
         private Socket sock;
         private uint seqC2S, seqS2C;
-        private AesCtr encC2S, decS2C;
+        private ISshCipher encC2S, decS2C;
         private HMACSHA256 macC2S, macS2C;
 
         /// <summary>服务端版本横幅（如 SSH-2.0-OpenSSH_9.6p1）。</summary>
@@ -132,19 +137,22 @@ namespace SNETCracker.Checker
                 sessionId = KexDhGroup14(clientBanner, icPayload, isPayload, out k, out h);
             }
 
-            // 3) 密钥派生（RFC 4253 §7.2）并激活加密
-            byte[] ivC = DeriveKey(k, h, 'A', sessionId, 16);
-            byte[] ivS = DeriveKey(k, h, 'B', sessionId, 16);
-            byte[] keyC = DeriveKey(k, h, 'C', sessionId, 16);
-            byte[] keyS = DeriveKey(k, h, 'D', sessionId, 16);
+            string cipherC2S = SelectCipher(srv.CipherC2S);
+            string cipherS2C = SelectCipher(srv.CipherS2C);
+
+            // 3) 按协商出的 cipher 派生 IV/密钥（RFC 4253 §7.2）并激活加密
+            byte[] ivC = DeriveKey(k, h, 'A', sessionId, CipherBlockSize(cipherC2S));
+            byte[] ivS = DeriveKey(k, h, 'B', sessionId, CipherBlockSize(cipherS2C));
+            byte[] keyC = DeriveKey(k, h, 'C', sessionId, CipherKeyLength(cipherC2S));
+            byte[] keyS = DeriveKey(k, h, 'D', sessionId, CipherKeyLength(cipherS2C));
             byte[] macKC = DeriveKey(k, h, 'E', sessionId, 32);
             byte[] macKS = DeriveKey(k, h, 'F', sessionId, 32);
 
             SendPacket(new byte[] { MsgNewKeys });
-            encC2S = new AesCtr(keyC, ivC);
+            encC2S = CreateCipher(cipherC2S, keyC, ivC, true);
             macC2S = new HMACSHA256(macKC);
             ExpectPacket(MsgNewKeys);
-            decS2C = new AesCtr(keyS, ivS);
+            decS2C = CreateCipher(cipherS2C, keyS, ivS, false);
             macS2C = new HMACSHA256(macKS);
 
             // 4) userauth 服务
@@ -633,7 +641,7 @@ namespace SNETCracker.Checker
 
         private sealed class KexInitInfo
         {
-            public string Kex = "", FirstKex = "";
+            public string Kex = "", FirstKex = "", CipherC2S = "", CipherS2C = "";
             public bool Follows;
         }
 
@@ -644,7 +652,8 @@ namespace SNETCracker.Checker
             w.WBytes(RandomBytes(16));
             w.WString(KexCurve25519 + "," + KexEcdhP256 + "," + KexDhG14);   // kex（客户端顺序即优先级）
             w.WString("ssh-ed25519,ecdsa-sha2-nistp256,rsa-sha2-256,rsa-sha2-512,ssh-rsa"); // hostkey
-            w.WString("aes128-ctr"); w.WString("aes128-ctr");              // cipher
+            string ciphers = string.Join(",", CipherNames);
+            w.WString(ciphers); w.WString(ciphers);                        // cipher
             w.WString("hmac-sha2-256"); w.WString("hmac-sha2-256");        // mac
             w.WString("none"); w.WString("none");                          // compression
             w.WString(""); w.WString("");                                  // languages
@@ -659,16 +668,45 @@ namespace SNETCracker.Checker
             var info = new KexInitInfo();
             info.Kex = Encoding.ASCII.GetString(r.RString());
             info.FirstKex = info.Kex.Split(',')[0];
-            for (int i = 0; i < 9; i++) r.RString(); // 其余 9 个 name-list
+            r.RString(); // host key algorithms
+            info.CipherC2S = Encoding.ASCII.GetString(r.RString());
+            info.CipherS2C = Encoding.ASCII.GetString(r.RString());
+            for (int i = 0; i < 6; i++) r.RString(); // MAC + compression + languages
             info.Follows = r.R8() != 0;
             return info;
+        }
+
+        private static string SelectCipher(string serverOffers)
+        {
+            string[] offered = serverOffers.Split(',');
+            foreach (string candidate in CipherNames)
+            {
+                foreach (string server in offered)
+                {
+                    if (string.Equals(candidate, server, StringComparison.Ordinal)) return candidate;
+                }
+            }
+            throw new Exception("服务端不支持可用的加密算法；客户端提供 " + string.Join(",", CipherNames)
+                + "；服务端提供 " + serverOffers);
+        }
+
+        private static int CipherKeyLength(string name)
+        {
+            if (name.StartsWith("aes128-", StringComparison.Ordinal)) return 16;
+            if (name.StartsWith("aes192-", StringComparison.Ordinal)) return 24;
+            return 24 + (name.StartsWith("aes256-", StringComparison.Ordinal) ? 8 : 0); // AES-256=32，3DES=24
+        }
+
+        private static int CipherBlockSize(string name)
+        {
+            return name == "3des-cbc" ? 8 : 16;
         }
 
         // ===================== 包收发 =====================
 
         private void SendPacket(byte[] payload)
         {
-            int bs = encC2S != null ? 16 : 8;
+            int bs = encC2S != null ? encC2S.BlockSize : 8;
             int pad = bs - ((payload.Length + 5) % bs);
             if (pad < 4) pad += bs;
             int pktLen = payload.Length + 1 + pad;
@@ -694,30 +732,34 @@ namespace SNETCracker.Checker
 
         private byte[] RecvPacket()
         {
-            byte[] first = ReadExact(4);
-            if (decS2C != null) decS2C.Transform(first, 0, 4);
+            // CBC 必须按完整块解密；CTR 也可复用同一分块读取逻辑。
+            int bs = decS2C != null ? decS2C.BlockSize : 8;
+            byte[] first = ReadExact(bs);
+            if (decS2C != null) decS2C.Transform(first, 0, first.Length);
             int pktLen = (first[0] << 24) | (first[1] << 16) | (first[2] << 8) | first[3];
-            if (pktLen < 1 || pktLen > 1024 * 1024)
+            if (pktLen < 1 || pktLen > 1024 * 1024 || pktLen + 4 < bs)
             {
                 throw new Exception("SSH 包长度非法: " + pktLen);
             }
-            byte[] rest = ReadExact(pktLen);
+            byte[] rest = ReadExact(pktLen + 4 - bs);
             if (decS2C != null) decS2C.Transform(rest, 0, rest.Length);
+            byte[] plain = Concat(first, rest);
             if (macS2C != null)
             {
                 byte[] macIn = ReadExact(32);
                 byte[] seqb = { (byte)(seqS2C >> 24), (byte)(seqS2C >> 16), (byte)(seqS2C >> 8), (byte)seqS2C };
-                byte[] expect = macS2C.ComputeHash(Concat(seqb, first, rest));
+                byte[] expect = macS2C.ComputeHash(Concat(seqb, plain));
                 for (int i = 0; i < 32; i++)
                 {
                     if (macIn[i] != expect[i]) throw new Exception("SSH MAC 校验失败");
                 }
             }
             seqS2C++;
-            int pad = rest[0];
+            int pad = plain[4];
             int len = pktLen - pad - 1;
+            if (pad < 4 || len < 0 || len > pktLen - 1) throw new Exception("SSH 填充长度非法");
             byte[] payload = new byte[len];
-            Buffer.BlockCopy(rest, 1, payload, 0, len);
+            Buffer.BlockCopy(plain, 5, payload, 0, len);
             return payload;
         }
 
@@ -792,18 +834,66 @@ namespace SNETCracker.Checker
             catch { return ""; }
         }
 
-        // ===================== AES-128-CTR =====================
+        // ===================== 加密算法 =====================
 
-        private sealed class AesCtr : IDisposable
+        private interface ISshCipher : IDisposable
         {
+            int BlockSize { get; }
+            void Transform(byte[] buf, int off, int len);
+        }
+
+        private static ISshCipher CreateCipher(string name, byte[] key, byte[] iv, bool encrypt)
+        {
+            if (name.EndsWith("-ctr", StringComparison.Ordinal)) return new AesCtr(key, iv);
+            return new BlockCipher(name, key, iv, encrypt);
+        }
+
+        /// <summary>AES-CBC / 3DES-CBC；TransformBlock 保持跨包 CBC 链接状态。</summary>
+        private sealed class BlockCipher : ISshCipher
+        {
+            private readonly SymmetricAlgorithm algorithm;
+            private readonly ICryptoTransform transform;
+
+            public int BlockSize { get; private set; }
+
+            public BlockCipher(string name, byte[] key, byte[] iv, bool encrypt)
+            {
+                algorithm = name == "3des-cbc" ? (SymmetricAlgorithm)TripleDES.Create() : Aes.Create();
+                algorithm.Mode = CipherMode.CBC;
+                algorithm.Padding = PaddingMode.None;
+                algorithm.Key = key;
+                algorithm.IV = iv;
+                BlockSize = algorithm.BlockSize / 8;
+                transform = encrypt ? algorithm.CreateEncryptor() : algorithm.CreateDecryptor();
+            }
+
+            public void Transform(byte[] buf, int off, int len)
+            {
+                if (len == 0) return;
+                if (len % BlockSize != 0) throw new Exception("SSH CBC 数据未按块对齐");
+                transform.TransformBlock(buf, off, len, buf, off);
+            }
+
+            public void Dispose()
+            {
+                transform.Dispose();
+                algorithm.Dispose();
+            }
+        }
+
+        private sealed class AesCtr : ISshCipher
+        {
+            private readonly Aes aes;
             private readonly ICryptoTransform ecb;
             private readonly byte[] counter;
             private readonly byte[] stream = new byte[16];
             private int used = 16;
 
+            public int BlockSize { get { return 16; } }
+
             public AesCtr(byte[] key, byte[] iv)
             {
-                Aes aes = Aes.Create();
+                aes = Aes.Create();
                 aes.Mode = CipherMode.ECB;
                 aes.Padding = PaddingMode.None;
                 aes.Key = key;
@@ -833,6 +923,7 @@ namespace SNETCracker.Checker
             public void Dispose()
             {
                 ecb.Dispose();
+                aes.Dispose();
             }
         }
 
