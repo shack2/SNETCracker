@@ -3,6 +3,9 @@ bin/
 obj/
 out/
 publish/
+/dist/
+__pycache__/
+*.pyc
 
 # IDE
 .vs/

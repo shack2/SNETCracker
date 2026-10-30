@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Assemble one SKILL archive with Windows and Linux Native AOT binaries."""
 
+import argparse
 from pathlib import Path
 import zipfile
 
@@ -39,13 +40,21 @@ def archive_version(archive: Path, rid: str) -> str:
 
 
 def main() -> None:
-    windows_archive = find_archive(ROOT / "pkg-win", "win-x64")
-    linux_archive = find_archive(ROOT / "pkg-linux", "linux-x64")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--windows", type=Path, default=ROOT / "pkg-win",
+                        help="Directory containing one Windows platform zip")
+    parser.add_argument("--linux", type=Path, default=ROOT / "pkg-linux",
+                        help="Directory containing one Linux platform zip")
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "dist")
+    args = parser.parse_args()
+
+    windows_archive = find_archive(args.windows, "win-x64")
+    linux_archive = find_archive(args.linux, "linux-x64")
     version = archive_version(windows_archive, "win-x64")
     linux_version = archive_version(linux_archive, "linux-x64")
     if version != linux_version:
         raise RuntimeError(f"Windows/Linux version mismatch: {version} != {linux_version}")
-    output = ROOT / "dist" / f"SPasswordCheckerV2.SKILL_{version}.zip"
+    output = args.output_dir.resolve() / f"SPasswordCheckerV2.SKILL_{version}.zip"
     output.parent.mkdir(parents=True, exist_ok=True)
 
     with zipfile.ZipFile(windows_archive) as win, zipfile.ZipFile(linux_archive) as linux:

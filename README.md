@@ -28,7 +28,7 @@ V2 为全新重写版本（Avalonia + Native AOT，全协议自实现）。旧�
 | `SNETCracker_<版本>_linux-x64.tar.gz` | Linux x64 | GUI + spc + config |
 | `SNETCracker_<版本>_osx-x64.tar.gz` | macOS Intel | 同上 |
 | `SNETCracker_<版本>_osx-arm64.tar.gz` | macOS Apple Silicon | 同上 |
-| `SPasswordCheckerV2.SKILL_<版本>.zip` | Kimi 智能体技能包 | SKILL.md + spc.exe + config |
+| `SPasswordCheckerV2.SKILL_<版本>.zip` | Kimi 智能体技能包 | SKILL.md + Windows/Linux spc + config |
 
 **Linux**：tar 包已保留可执行位；GUI 需要系统装有 fontconfig 等常见桌面库（纯 CLI 的 `spc` 无此依赖）。
 
@@ -57,10 +57,23 @@ spc --update
 
 ## 构建
 
+本地一键发布并打包当前平台的 GUI + CLI（默认输出到 `dist/`）：
+
 ```bash
-dotnet publish SPasswordCheckerV2/SPasswordCheckerV2.csproj -c Release -r win-x64      # GUI
-dotnet publish SPasswordCheckerV2.Cmd/SPasswordCheckerV2.Cmd.csproj -c Release -r win-x64  # CLI
+python scripts/publish_local.py                 # 自动检测当前平台
+python scripts/publish_local.py --check-only    # 只检查 UI/CLI 源码版本是否一致
+python scripts/publish_local.py --rid win-x64   # 指定平台
 ```
+
+脚本会对 GUI 和 CLI 使用同一版本，并在打包后校验 `spc --version`；Windows 下还会校验桌面端文件版本。已有产物重打包时使用 `--skip-build`，覆盖同名包时使用 `--force`。已手工配置 MSVC/SDK 环境时可追加 `--ilc-environmental-tools`。
+
+双平台 SKILL 本地打包（参数分别为 Windows/Linux 平台 zip 所在目录）：
+
+```bash
+python .github/scripts/skill_package.py --windows pkg-win --linux pkg-linux
+```
+
+SKILL 版本直接继承平台包，Windows/Linux 版本不一致时会拒绝打包。
 
 发版：打 `v*` 标签并推送，GitHub Actions 自动构建四平台包、创建 Release，并同步到自建更新服务。
 
